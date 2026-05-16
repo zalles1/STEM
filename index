@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEM English Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+--bg:#080d16;--bg2:#0e1525;--card:#131f33;--card2:#182942;
+--border:#1e3355;--fg:#e6ecf5;--muted:#7189aa;
+--em:#10b981;--em-d:rgba(16,185,129,.12);
+--cy:#06b6d4;--cy-d:rgba(6,182,212,.12);
+--am:#f59e0b;--am-d:rgba(245,158,11,.12);
+--ro:#f43f5e;--ro-d:rgba(244,63,94,.12);
+--vi:#8b5cf6;--vi-d:rgba(139,92,246,.12);
+--ok:#10b981;--ok-d:rgba(16,185,129,.14);
+--no:#f43f5e;--no-d:rgba(244,63,94,.14);
+--wr:#f59e0b;--wr-d:rgba(245,158,11,.14)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ===== FONDO ===== */
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;
+background:
+  radial-gradient(ellipse 600px 400px at 15% 20%,rgba(16,185,129,.07),transparent),
+  radial-gradient(ellipse 500px 500px at 85% 80%,rgba(6,182,212,.06),transparent),
+  radial-gradient(ellipse 400px 300px at 50% 50%,rgba(139,92,246,.04),transparent)}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(16,185,129,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.018) 1px,transparent 1px);
+background-size:55px 55px;animation:gm 50s linear infinite}
+@keyframes gm{to{transform:translate(55px,55px)}}
+.bg-orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.08;pointer-events:none;z-index:0;animation:orbFloat 20s ease-in-out infinite}
+.orb1{width:400px;height:400px;top:-100px;left:-80px;background:var(--em)}
+.orb2{width:350px;height:350px;bottom:-120px;right:-60px;background:var(--cy)}
+.orb3{width:250px;height:250px;top:50%;left:40%;background:var(--vi);animation-delay:-10s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(.95)}}
+
+/* ===== HEADER ===== */
+header{position:sticky;top:0;z-index:100;background:rgba(8,13,22,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 1rem}
+.hdr{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;gap:8px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:1.1rem;letter-spacing:-.4px;white-space:nowrap}
+.logo-i{width:32px;height:32px;background:linear-gradient(135deg,var(--em),var(--cy));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--bg);font-weight:800}
+.logo em{font-style:normal;color:var(--em)}
+.hstats{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.hb{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--muted);padding:4px 10px;background:var(--card);border-radius:16px;border:1px solid var(--border)}
+.hb i{font-size:.68rem}.hb .v{color:var(--fg);font-weight:700;font-family:'JetBrains Mono',monospace}
+.author{font-size:.55rem;color:var(--muted);padding:3px 9px;background:linear-gradient(135deg,var(--vi-d),var(--cy-d));border-radius:12px;border:1px solid rgba(139,92,246,.15);line-height:1.3;text-align:center}
+.author b{color:var(--cy);display:block;font-size:.5rem;text-transform:uppercase;letter-spacing:.8px}
+
+/* ===== NAV ===== */
+nav.tabs{position:relative;z-index:10;max-width:1320px;margin:1rem auto 0;padding:0 1rem;display:flex;gap:3px;overflow-x:auto}
+.tb{flex:1;min-width:0;padding:10px 5px;background:var(--card);border:1px solid var(--border);border-radius:10px 10px 0 0;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .25s;border-bottom:3px solid transparent;white-space:nowrap}
+.tb i{font-size:.95rem}.tb:hover{background:var(--card2);color:var(--fg)}
+.tb.on{background:var(--bg2);color:var(--em);border-bottom-color:var(--em)}
+.tb small{font-size:.5rem;text-transform:uppercase;letter-spacing:.8px;opacity:.45}
+
+/* ===== MAIN ===== */
+main{position:relative;z-index:10;max-width:1320px;margin:0 auto;padding:0 1rem 2rem}
+.pnl{display:none;background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;padding:1.5rem;animation:fi .35s ease}
+.pnl.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== SUBTABS ===== */
+.stabs{display:flex;gap:3px;margin-bottom:1.25rem;background:var(--card);padding:4px;border-radius:10px;border:1px solid var(--border);overflow-x:auto}
+.stab{padding:7px 13px;border:none;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:.72rem;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.stab:hover{color:var(--fg)}.stab.on{background:var(--em);color:var(--bg);font-weight:600}
+.scont{display:none;animation:fi .3s}.scont.on{display:block}
+
+/* ===== SECTION HEADER ===== */
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.7rem}
+.stitle{font-size:1.35rem;font-weight:800;letter-spacing:-.6px;background:linear-gradient(135deg,var(--fg),var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stitle small{display:block;font-size:.7rem;font-weight:400;margin-top:3px;letter-spacing:0;-webkit-text-fill-color:var(--muted)}
+.dsel{display:flex;gap:2px;background:var(--card);padding:3px;border-radius:9px;border:1px solid var(--border);flex-wrap:wrap}
+.db{padding:5px 10px;border:none;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;letter-spacing:.5px}
+.db:hover{color:var(--fg)}.db.on{background:var(--em);color:var(--bg);box-shadow:0 2px 8px rgba(16,185,129,.3)}
+
+/* ===== READING ===== */
+.rpass{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;line-height:1.85;font-size:.88rem;color:#a8bdd6;max-height:260px;overflow-y:auto;position:relative}
+.vh{color:var(--em);cursor:pointer;border-bottom:1px dashed var(--em);transition:all .2s}.vh:hover{background:var(--em-d);border-radius:3px}
+.vtt{position:fixed;background:var(--card2);border:1px solid var(--em);border-radius:10px;padding:10px 13px;font-size:.78rem;color:var(--fg);z-index:1000;pointer-events:none;opacity:0;transition:opacity .15s;max-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.vtt.show{opacity:1}.vtt .vw{color:var(--em);font-weight:700}.vtt .vd{color:var(--muted);margin-top:3px;font-size:.72rem}
+
+/* ===== QUESTIONS ===== */
+.qgrid{display:grid;gap:.75rem}
+.qc{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.1rem;transition:all .3s}
+.qc.ok{border-color:var(--ok);background:var(--ok-d)}.qc.no{border-color:var(--no);background:var(--no-d)}
+.qn{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--em);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.qt{font-size:.85rem;margin-bottom:9px;line-height:1.5}
+.qops{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+@media(max-width:600px){.qops{grid-template-columns:1fr}}
+.qo{padding:8px 11px;background:rgba(255,255,255,.015);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.8rem;color:#8da4c4;transition:all .2s;font-family:'Space Grotesk',sans-serif;text-align:left}
+.qo:hover:not(.dis){background:var(--em-d);border-color:var(--em);color:var(--fg)}
+.qo.sel{background:var(--em-d);border-color:var(--em);color:var(--em);font-weight:500}
+.qo.dis{pointer-events:none;opacity:.5}
+.qo.ca{background:var(--ok-d)!important;border-color:var(--ok)!important;color:var(--ok)!important;opacity:1!important;font-weight:600}
+.qo.wa{background:var(--no-d)!important;border-color:var(--no)!important;color:var(--no)!important;opacity:1!important}
+.qfb{margin-top:7px;font-size:.75rem;padding:7px 10px;border-radius:7px;display:none;line-height:1.5}
+.qfb.show{display:block}
+.qfb.fok{background:var(--ok-d);color:var(--ok)}.qfb.fno{background:var(--no-d);color:var(--no)}
+
+/* ===== GAP ===== */
+.gap-s{font-size:.9rem;line-height:2.2;color:#a8bdd6;margin-bottom:.75rem;padding:1.1rem;background:var(--card);border-radius:11px;border:1px solid var(--border)}
+.gi{display:inline-block;min-width:90px;padding:4px 10px;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--fg);font-family:'JetBrains Mono',monospace;font-size:.84rem;outline:none;text-align:center;transition:all .2s;vertical-align:middle}
+.gi:focus{border-color:var(--em);box-shadow:0 0 0 2px var(--em-d)}
+.gi.ok{border-color:var(--ok);background:var(--ok-d);color:var(--ok)}.gi.no{border-color:var(--no);background:var(--no-d);color:var(--no)}
+.gi::placeholder{color:var(--muted);font-size:.7rem}
+
+/* ===== MATCHING ===== */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.mgrid{grid-template-columns:1fr}}
+.mcol{display:flex;flex-direction:column;gap:6px}
+.mitem{padding:11px 14px;background:var(--card);border:2px solid var(--border);border-radius:9px;cursor:pointer;font-size:.84rem;transition:all .25s;user-select:none}
+.mitem:hover{border-color:var(--cy);transform:translateY(-1px)}
+.mitem.sel{border-color:var(--em);background:var(--em-d);color:var(--em);font-weight:500}
+.mitem.done{border-color:var(--ok);background:var(--ok-d);color:var(--ok);pointer-events:none;opacity:.65}
+.mitem.wm{border-color:var(--no);background:var(--no-d);color:var(--no);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ===== TRUE/FALSE ===== */
+.tf-g{display:flex;gap:8px;align-items:center}
+.tfb{padding:9px 22px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.84rem;font-family:'Space Grotesk',sans-serif;transition:all .2s;background:rgba(255,255,255,.015);color:var(--muted);font-weight:500}
+.tfb:hover{border-color:var(--cy);color:var(--cy)}
+.tfb.sel{border-color:var(--em);color:var(--em);background:var(--em-d)}
+.tfb.cat{border-color:var(--ok)!important;color:var(--ok)!important;background:var(--ok-d)!important}
+.tfb.wat{border-color:var(--no)!important;color:var(--no)!important;background:var(--no-d)!important}
+
+/* ===== SHORT ANSWER ===== */
+.sai{width:100%;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s}
+.sai:focus{border-color:var(--em);box-shadow:0 0 0 2px var(--em-d)}.sai::placeholder{color:var(--muted)}
+
+/* ===== SCRAMBLE ===== */
+.scr-w{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:1rem 0}
+.scr-l{width:40px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:8px;font-size:1.15rem;font-weight:800;color:var(--em);font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all .25s}
+.scr-l:hover{border-color:var(--em);transform:translateY(-3px);box-shadow:0 4px 12px rgba(16,185,129,.2)}
+.scr-l.pl{opacity:.25;pointer-events:none;transform:scale(.9)}
+.scr-a{display:flex;gap:5px;justify-content:center;min-height:48px;padding:10px;background:var(--card);border:2px dashed var(--border);border-radius:10px;margin:1rem 0;flex-wrap:wrap}
+.scr-sl{width:36px;height:40px;border:1px dashed var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:800;color:var(--fg);font-family:'JetBrains Mono',monospace;transition:all .2s}
+.scr-sl.fil{border-style:solid;border-color:var(--em);background:var(--em-d);color:var(--em)}
+
+/* ===== DICTATION ===== */
+.dbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:.75rem}
+.dplay{width:48px;height:48px;border-radius:50%;border:2px solid var(--cy);background:var(--cy-d);color:var(--cy);font-size:1.1rem;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;justify-content:center}
+.dplay:hover{background:rgba(6,182,212,.2);transform:scale(1.06);box-shadow:0 4px 16px rgba(6,182,212,.25)}
+.dplay.pl2{background:var(--cy);color:var(--bg);animation:dpulse 1.2s ease infinite}
+@keyframes dpulse{0%,100%{box-shadow:0 0 0 0 rgba(6,182,212,.35)}50%{box-shadow:0 0 0 14px rgba(6,182,212,0)}}
+
+/* ===== LISTENING WORDS ===== */
+.lex{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:1.25rem;margin-bottom:.75rem}
+.lsbox{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;padding:12px;background:var(--card2);border-radius:9px;border:1px solid var(--border)}
+.wgrid{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:.75rem 0}
+.wchip{padding:8px 15px;border:1px solid var(--border);border-radius:8px;font-size:.86rem;font-weight:500;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.015);color:#8da4c4;font-family:'JetBrains Mono',monospace;user-select:none}
+.wchip:hover{border-color:var(--cy);color:var(--cy);background:var(--cy-d)}
+.wchip.sel{background:var(--em-d);border-color:var(--em);color:var(--em)}
+.wchip.cw{background:var(--ok-d);border-color:var(--ok);color:var(--ok)}
+.wchip.ww{background:var(--no-d);border-color:var(--no);color:var(--no)}
+.wchip.mw{background:var(--wr-d);border-color:var(--wr);color:var(--wr);opacity:.55}
+.lnav{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.75rem}
+.lnav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--fg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.78rem}
+.lnav button:hover{border-color:var(--cy);color:var(--cy)}
+.lctr{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted)}
+
+/* ===== AUDIO CARD ===== */
+.aucard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1rem}
+.auvis{width:100px;height:100px;margin:0 auto .75rem;border-radius:50%;background:var(--cy-d);border:2px solid var(--cy);display:flex;align-items:center;justify-content:center;position:relative;transition:all .3s;cursor:pointer}
+.auvis.playing{animation:apulse 1.5s ease-in-out infinite;box-shadow:0 0 35px rgba(6,182,212,.2)}
+@keyframes apulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.auvis i{font-size:1.9rem;color:var(--cy)}.auvis .ring{position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(6,182,212,.12)}
+.auctrls{display:flex;justify-content:center;gap:8px;margin-bottom:.5rem}
+.abtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--fg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.88rem;transition:all .2s}
+.abtn:hover{border-color:var(--cy);color:var(--cy);background:var(--cy-d)}
+.pbar{width:100%;height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px}
+.pbar-f{height:100%;background:linear-gradient(90deg,var(--cy),var(--em));border-radius:2px;transition:width .5s ease}
+.tbox{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:0;margin-bottom:1rem;max-height:0;overflow:hidden;transition:all .4s;opacity:0}
+.tbox.show{max-height:320px;opacity:1;padding:1rem;overflow-y:auto}
+.tbox p{line-height:1.8;font-size:.85rem;color:#8da4c4}
+
+/* ===== WRITING ===== */
+.wprompt{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;border-left:3px solid var(--em)}
+.plbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--em);margin-bottom:6px}
+.ptxt{font-size:.94rem;line-height:1.65;color:var(--fg)}
+.wkws{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.kwt{padding:3px 10px;background:var(--em-d);border:1px solid rgba(16,185,129,.15);border-radius:5px;font-size:.7rem;color:var(--em);font-family:'JetBrains Mono',monospace}
+.warea{width:100%;min-height:170px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.1rem;color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:.9rem;line-height:1.75;resize:vertical;outline:none;transition:border-color .3s}
+.warea:focus{border-color:var(--em);box-shadow:0 0 0 3px var(--em-d)}.warea::placeholder{color:var(--muted)}
+.wstats{display:flex;gap:1.2rem;margin-top:7px;font-size:.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.wstats strong{color:var(--fg)}
+.wfb{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.1rem;margin-top:1rem;display:none;border-left:3px solid var(--am)}
+.wfb.show{display:block;animation:fi .3s}
+.wfb h4{font-size:.82rem;color:var(--am);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.fbi{display:flex;align-items:flex-start;gap:7px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.8rem;color:#8da4c4;line-height:1.5}
+.fbi:last-child{border-bottom:none}.fbi i{margin-top:2px;font-size:.75rem}
+.fg{color:var(--ok)}.fw{color:var(--wr)}.fb2{color:var(--no)}
+
+/* ===== SPEAKING ===== */
+.spkcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1rem}
+.spkw{font-size:1.8rem;font-weight:800;color:var(--fg);margin-bottom:4px;letter-spacing:-.5px}
+.spkph{font-family:'JetBrains Mono',monospace;font-size:.86rem;color:var(--cy);margin-bottom:2px}
+.spkm{font-size:.82rem;color:var(--muted)}
+.spkctx{margin-top:10px;font-size:.82rem;color:#6a80a0;font-style:italic}
+.lmod{padding:7px 14px;background:transparent;border:1px solid var(--cy);border-radius:7px;color:var(--cy);font-family:'Space Grotesk',sans-serif;font-size:.76rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;margin-top:10px}
+.lmod:hover{background:var(--cy-d);box-shadow:0 2px 10px rgba(6,182,212,.2)}
+.mbtn{width:72px;height:72px;border-radius:50%;border:2px solid var(--em);background:var(--em-d);color:var(--em);font-size:1.7rem;cursor:pointer;transition:all .3s;margin:.75rem auto;display:flex;align-items:center;justify-content:center}
+.mbtn:hover{background:rgba(16,185,129,.18);transform:scale(1.05);box-shadow:0 4px 20px rgba(16,185,129,.2)}
+.mbtn.rec{background:var(--em);color:var(--bg);animation:mpulse 1s ease infinite}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.35)}50%{box-shadow:0 0 0 18px rgba(16,185,129,0)}}
+.rres{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.1rem;margin-top:.75rem;display:none}
+.rres.show{display:block;animation:fi .3s}
+.rres .rl2{font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:4px}
+.rres .rt2{font-size:1.05rem;font-weight:600;color:var(--fg);margin-bottom:7px}
+.mind{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:16px;font-size:.76rem;font-weight:600}
+.mind.mg{background:var(--ok-d);color:var(--ok)}.mind.mp{background:var(--wr-d);color:var(--wr)}.mind.mr{background:var(--no-d);color:var(--no)}
+
+/* ===== CHAT ===== */
+.chcont{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.chtopics{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;padding:1rem;border-bottom:1px solid var(--border)}
+.tcard{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .25s}
+.tcard:hover{border-color:var(--em);transform:translateY(-2px);box-shadow:0 4px 12px rgba(16,185,129,.15)}
+.tcard.at{border-color:var(--em);background:var(--em-d)}
+.tcard h4{font-size:.84rem;color:var(--fg);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.tcard p{font-size:.68rem;color:var(--muted);line-height:1.3}
+.tlvl{font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:2px 6px;border-radius:4px;background:var(--am-d);color:var(--am);font-weight:700}
+.chmsgs{max-height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:9px}
+.cmsg{display:flex;gap:7px;max-width:88%;animation:fi .3s}
+.cmsg.ai{align-self:flex-start}.cmsg.usr{align-self:flex-end;flex-direction:row-reverse}
+.cav{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.cmsg.ai .cav{background:var(--cy-d);color:var(--cy)}.cmsg.usr .cav{background:var(--em-d);color:var(--em)}
+.cbbl{padding:9px 13px;border-radius:10px;font-size:.82rem;line-height:1.55}
+.cmsg.ai .cbbl{background:var(--card2);border:1px solid var(--border);color:#a8bdd6}
+.cmsg.usr .cbbl{background:var(--em-d);border:1px solid rgba(16,185,129,.18);color:var(--fg)}
+.chinput{display:flex;gap:7px;padding:.75rem;border-top:1px solid var(--border);align-items:flex-end}
+.chin{flex:1;padding:9px 13px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:.84rem;outline:none;resize:none;min-height:38px;max-height:80px}
+.chin:focus{border-color:var(--em)}.chin::placeholder{color:var(--muted)}
+.chmic{width:38px;height:38px;border-radius:50%;border:1px solid var(--em);background:var(--em-d);color:var(--em);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .2s;flex-shrink:0}
+.chmic:hover{background:rgba(16,185,129,.15)}.chmic.rec{background:var(--em);color:var(--bg);animation:mpulse 1s ease infinite}
+.chsend{width:38px;height:38px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--em),var(--cy));color:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.88rem;transition:all .2s;flex-shrink:0}
+.chsend:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(16,185,129,.3)}
+.chscore{background:var(--card2);border:1px solid var(--em);border-radius:11px;padding:1.1rem;margin:.75rem;display:none}
+.chscore.show{display:block;animation:fi .3s}
+.chscore h4{color:var(--em);margin-bottom:9px;font-size:.86rem}
+.sbars{display:grid;gap:7px}
+.sbar{display:flex;align-items:center;gap:8px}
+.sbar label{font-size:.7rem;color:var(--muted);min-width:115px}
+.sbar .bt{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.sbar .bf{height:100%;border-radius:4px;transition:width .6s ease}
+.sbar .bv{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--fg);min-width:35px;text-align:right}
+
+/* ===== BUTTONS ===== */
+.btnp{padding:10px 20px;background:linear-gradient(135deg,var(--em),#059669);color:#fff;border:none;border-radius:9px;font-family:'Space Grotesk',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:7px}
+.btnp:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.3)}
+.btnp:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none}
+.btns{padding:9px 16px;background:transparent;color:var(--em);border:1px solid var(--border);border-radius:9px;font-family:'Space Grotesk',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+.btns:hover{border-color:var(--em);background:var(--em-d)}
+.acts{display:flex;justify-content:space-between;align-items:center;margin-top:1.25rem;flex-wrap:wrap;gap:.6rem}
+
+/* ===== RESULTS ===== */
+.rpnl{background:var(--card);border:1px solid var(--em);border-radius:14px;padding:1.5rem;text-align:center;display:none;margin-top:1.25rem;border-left:4px solid var(--em)}
+.rpnl.show{display:block;animation:fi .4s}
+.rsc{font-size:2.5rem;font-weight:800;font-family:'JetBrains Mono',monospace;background:linear-gradient(135deg,var(--em),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.rlbl{font-size:.82rem;color:var(--muted);margin-bottom:.5rem}
+.rdet{display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:8px;margin-top:.5rem}
+.ri{background:rgba(255,255,255,.02);padding:10px;border-radius:9px;border:1px solid var(--border)}
+.ri .rv{font-size:1.15rem;font-weight:700;color:var(--fg);font-family:'JetBrains Mono',monospace}
+.ri .rl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ===== TOAST ===== */
+.toast-c{position:fixed;top:70px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:5px}
+.toast{padding:9px 15px;border-radius:9px;font-size:.78rem;font-family:'Space Grotesk',sans-serif;animation:ti .3s ease,to .3s ease 2.7s forwards;display:flex;align-items:center;gap:6px;box-shadow:0 6px 24px rgba(0,0,0,.4);font-weight:500}
+.ts{background:#052e16;border:1px solid var(--ok);color:var(--ok)}
+.te{background:#2a0a0a;border:1px solid var(--no);color:var(--no)}
+.ti2{background:#082a3a;border:1px solid var(--cy);color:var(--cy)}
+@keyframes ti{from{opacity:0;transform:translateX(25px)}to{opacity:1;transform:translateX(0)}}
+@keyframes to{from{opacity:1}to{opacity:0;transform:translateX(25px)}}
+
+footer{text-align:center;padding:1.5rem;font-size:.7rem;color:var(--muted);position:relative;z-index:10;border-top:1px solid var(--border);margin-top:.5rem}
+footer strong{color:var(--cy)}
+
+@media(max-width:768px){nav.tabs{flex-wrap:wrap}.tb{flex:1 1 28%;min-width:auto}.pnl{padding:1rem}.qops,.mgrid{grid-template-columns:1fr}.chtopics{grid-template-columns:1fr}.hstats{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div><div class="bg-grid"></div>
+<div class="bg-orb orb1"></div><div class="bg-orb orb2"></div><div class="bg-orb orb3"></div>
+<div class="vtt" id="vtt"><div class="vw"></div><div class="vd"></div></div>
+<div class="toast-c" id="toastC"></div>
+
+<header><div class="hdr">
+<div class="logo"><div class="logo-i"><i class="fas fa-atom"></i></div>STEM <em>English</em> Lab</div>
+<div class="hstats">
+<div class="hb"><i class="fas fa-fire" style="color:#f59e0b"></i>Racha: <span class="v" id="strk">0</span></div>
+<div class="hb"><i class="fas fa-star" style="color:#10b981"></i>XP: <span class="v" id="xpD">0</span></div>
+<div class="hb"><i class="fas fa-check-circle" style="color:#06b6d4"></i><span class="v" id="corD">0</span></div>
+<div class="author"><b>Elaborado por</b>Carmen Beatriz Zalles Castellanos</div>
+</div></div></header>
+
+<nav class="tabs">
+<button class="tb on" data-t="practice"><i class="fas fa-graduation-cap"></i>Practica<small>Exercises</small></button>
+<button class="tb" data-t="reading"><i class="fas fa-book-open"></i>Comprension Escrita<small>Reading</small></button>
+<button class="tb" data-t="listening"><i class="fas fa-headphones"></i>Comprension Oral<small>Listening</small></button>
+<button class="tb" data-t="writing"><i class="fas fa-pen-fancy"></i>Expresion Escrita<small>Writing</small></button>
+<button class="tb" data-t="speaking"><i class="fas fa-microphone-alt"></i>Expresion Oral<small>Speaking</small></button>
+</nav>
+
+<main>
+<!-- ===== PRACTICA ===== -->
+<section class="pnl on" id="p-practice">
+<div class="sh"><div class="stitle">Practica Interactiva<small>Ejercicios tipo Google Translate adaptados a STEM</small></div><div class="dsel" id="prDS"></div></div>
+<div class="stabs" id="prST">
+<button class="stab on" data-s="pr-gap"><i class="fas fa-puzzle-piece"></i>Gaps</button>
+<button class="stab" data-s="pr-match"><i class="fas fa-link"></i>Matching</button>
+<button class="stab" data-s="pr-tf"><i class="fas fa-check-double"></i>True/False</button>
+<button class="stab" data-s="pr-sa"><i class="fas fa-keyboard"></i>Short Answer</button>
+<button class="stab" data-s="pr-scr"><i class="fas fa-random"></i>Scramble</button>
+<button class="stab" data-s="pr-dict"><i class="fas fa-headphones"></i>Dictation</button>
+</div>
+<div class="scont on" id="s-pr-gap"><div id="gapA"></div><div class="acts"><button class="btnp" id="chkGap"><i class="fas fa-check"></i> Comprobar</button><button class="btns" id="newGap"><i class="fas fa-redo"></i> Nuevo</button></div></div>
+<div class="scont" id="s-pr-match"><div id="matchA"></div><div class="acts"><button class="btnp" id="chkMt" disabled><i class="fas fa-check"></i> Comprobar</button><button class="btns" id="newMt"><i class="fas fa-redo"></i> Nuevo</button></div></div>
+<div class="scont" id="s-pr-tf"><div id="tfA"></div><div class="acts"><button class="btnp" id="chkTf"><i class="fas fa-check"></i> Comprobar</button><button class="btns" id="newTf"><i class="fas fa-redo"></i> Nuevo</button></div></div>
+<div class="scont" id="s-pr-sa"><div id="saA"></div><div class="acts"><button class="btnp" id="chkSa"><i class="fas fa-check"></i> Comprobar</button><button class="btns" id="newSa"><i class="fas fa-redo"></i> Nuevo</button></div></div>
+<div class="scont" id="s-pr-scr"><div id="scrA"></div><div class="acts"><button class="btns" id="newScr"><i class="fas fa-redo"></i> Nueva palabra</button></div></div>
+<div class="scont" id="s-pr-dict"><div id="dictA"></div><div class="acts"><button class="btnp" id="chkDt"><i class="fas fa-check"></i> Verificar</button><button class="btns" id="newDt"><i class="fas fa-redo"></i> Nuevo</button></div></div>
+</section>
+
+<!-- ===== COMPRENSIÓN ESCRITA ===== -->
+<section class="pnl" id="p-reading">
+<div class="sh"><div class="stitle">Comprension Escrita<small>Lee y responde</small></div><div class="dsel" id="rdDS"></div></div>
+<div class="rpass" id="rdP"></div>
+<div class="qgrid" id="rdQ"></div>
+<div class="acts"><button class="btnp" id="chkRd" disabled><i class="fas fa-check"></i> Comprobar</button><button class="btns" id="newRd"><i class="fas fa-redo"></i> Nuevo texto</button></div>
+<div class="rpnl" id="rdR"><div class="rsc" id="rdSc">0%</div><div class="rlbl">Resultado</div><div class="rdet"><div class="ri"><div class="rv" id="rdC">0</div><div class="rl">Correctas</div></div><div class="ri"><div class="rv" id="rdI">0</div><div class="rl">Incorrectas</div></div><div class="ri"><div class="rv" id="rdX">0</div><div class="rl">XP</div></div></div></div>
+</section>
+
+<!-- ===== COMPRENSIÓN ORAL ===== -->
+<section class="pnl" id="p-listening">
+<div class="sh"><div class="stitle">Comprension Oral<small>Escucha y practica</small></div><div class="dsel" id="lsDS"></div></div>
+<div class="stabs" id="lsST">
+<button class="stab on" data-s="ls-words"><i class="fas fa-font"></i>Identificar Palabras</button>
+<button class="stab" data-s="ls-lect"><i class="fas fa-chalkboard-teacher"></i>Conferencias</button>
+<button class="stab" data-s="ls-gap"><i class="fas fa-puzzle-piece"></i>Gap Listening</button>
+</div>
+<div class="scont on" id="s-ls-words"><div id="lwA"></div><div class="acts"><button class="btnp" id="chkLw"><i class="fas fa-check"></i> Verificar</button><button class="btns" id="revLw"><i class="fas fa-eye"></i> Revelar oracion</button></div><div class="rpnl" id="lwR"></div></div>
+<div class="scont" id="s-ls-lect"><div id="llA"></div></div>
+<div class="scont" id="s-ls-gap"><div id="lgA"></div><div class="acts"><button class="btnp" id="chkLg"><i class="fas fa-check"></i> Verificar</button><button class="btns" id="newLg"><i class="fas fa-redo"></i> Nuevo</button></div></div>
+</section>
+
+<!-- ===== EXPRESIÓN ESCRITA ===== -->
+<section class="pnl" id="p-writing">
+<div class="sh"><div class="stitle">Expresion Escrita<small>Escribe y recibe feedback</small></div><div class="dsel" id="wrDS"></div></div>
+<div class="wprompt"><div class="plbl">Consigna</div><div class="ptxt" id="wrT"></div><div class="wkws" id="wrK"></div></div>
+<textarea class="warea" id="wrA" placeholder="Start writing your response here..." aria-label="Escritura"></textarea>
+<div class="wstats"><span>Palabras: <strong id="wwc">0</strong></span><span>Caracteres: <strong id="wcc">0</strong></span><span>Oraciones: <strong id="wsc">0</strong></span><span>Min: <strong id="wmw">80</strong></span></div>
+<div class="wfb" id="wrFb"><h4><i class="fas fa-clipboard-check"></i> Retroalimentacion</h4><div id="wrFi"></div></div>
+<div class="acts"><div style="display:flex;gap:7px"><button class="btnp" id="subWr"><i class="fas fa-paper-plane"></i> Evaluar</button><button class="btns" id="newWr"><i class="fas fa-redo"></i> Nueva consigna</button></div><button class="btns" id="clrWr"><i class="fas fa-eraser"></i> Limpiar</button></div>
+</section>
+
+<!-- ===== EXPRESIÓN ORAL ===== -->
+<section class="pnl" id="p-speaking">
+<div class="sh"><div class="stitle">Expresion Oral<small>Pronunciacion y conversacion</small></div><div class="dsel" id="spDS"></div></div>
+<div class="stabs" id="spST">
+<button class="stab on" data-s="sp-vocab"><i class="fas fa-spell-check"></i>Vocabulario</button>
+<button class="stab" data-s="sp-chat"><i class="fas fa-robot"></i>Conversacion IA</button>
+</div>
+<div class="scont on" id="s-sp-vocab"><div id="spVA"></div></div>
+<div class="scont" id="s-sp-chat"><div id="spCA"></div></div>
+</section>
+</main>
+
+<footer>Elaborado por <strong>Carmen Beatriz Zalles Castellanos</strong></footer>
+
+<script>
+// ============ DATOS ============
+const LV=['A1','A2','B1','B2','C1','C2'];
+const synthX=window.speechSynthesis;
+let S={xp:0,streak:0,correct:0,prLv:'A1',rdLv:'A1',rdIdx:0,rdAns:{},lsLv:'A1',lsIdx:0,lsSpd:.8,isSpeaking:false,wrLv:'B1',spLv:'B1',spIdx:0,spoken:new Set(),chatTopic:null,chatScores:{greeted:false,turns:0,kwUsed:new Set(),questions:0,totalWords:0,relevant:0},mtSel:null,mtDone:0,llIdx:0,llAns:{},scrAnswer:''};
+
+const gapD={
+A1:[{s:"The computer ___ information very quickly.",a:"processes",h:"p_c_s_es",o:["processes","produces","provides","protects"]},{s:"A ___ measures temperature changes.",a:"sensor",h:"se_s_r",o:["sensor","motor","battery","switch"]},{s:"Plants need ___ to grow.",a:"sunlight",h:"sun_ gh_",o:["sunlight","darkness","cold","metal"]},{s:"The ___ pumps blood through the body.",a:"heart",h:"h_ r_",o:["heart","brain","lung","stomach"]}],
+A2:[{s:"The algorithm ___ the data step by step.",a:"processes",h:"pr_c_ss_s",o:["processes","destroys","ignores","creates"]},{s:"Solar panels ___ sunlight into electricity.",a:"convert",h:"c_nv_rt",o:["convert","destroy","reflect","absorb"]},{s:"The ___ detected a change in pressure.",a:"sensor",h:"s_ns_r",o:["sensor","motor","cable","filter"]},{s:"Cybersecurity protects ___ from hackers.",a:"systems",h:"s_st_ms",o:["systems","plants","animals","minerals"]}],
+B1:[{s:"The researchers ___ their findings in a journal.",a:"published",h:"p_bl_sh_d",o:["published","destroyed","hidden","forgot"]},{s:"CRISPR allows scientists to ___ DNA with precision.",a:"edit",h:"_d_t",o:["edit","create","ignore","destroy"]},{s:"Renewable energy ___ dependence on fossil fuels.",a:"reduces",h:"r_d_c_s",o:["reduces","increases","maintains","ignores"]},{s:"The clinical trial ___ a significant improvement.",a:"demonstrated",h:"d_m_nst_t_d",o:["demonstrated","denied","ignored","questioned"]}],
+B2:[{s:"Quantum entanglement ___ instantaneous correlation.",a:"enables",h:"_n_bl_s",o:["enables","prevents","destroys","measures"]},{s:"Decoherence causes qubits to ___ their quantum properties.",a:"lose",h:"l_s_",o:["lose","gain","enhance","stabilize"]},{s:"The process requires ___ precision.",a:"nanometer-scale",h:"n_n_m_t_r",o:["nanometer-scale","approximate","macroscopic","random"]},{s:"Fault-tolerant computing would ___ the error problem.",a:"solve",h:"s_lv_",o:["solve","worsen","maintain","create"]}],
+C1:[{s:"Neuromorphic chips ___ synaptic weights on the same substrate.",a:"integrate",h:"_nt_gr_t_",o:["integrate","separate","eliminate","amplify"]},{s:"Surrogate gradients ___ the non-differentiable function.",a:"approximate",h:"_ppr_x_m_t_",o:["approximate","eliminate","solve","ignore"]},{s:"Asynchronous networks ___ the need for a global clock.",a:"eliminate",h:"_l_m_n_t_",o:["eliminate","require","enhance","maintain"]},{s:"Epigenetic reprogramming involves ___ erasure of methylation.",a:"systematic",h:"syst_m_t_c",o:["systematic","random","partial","negligible"]}],
+C2:[{s:"Pleiotropic effects ___ locus-specific demethylation strategies.",a:"necessitate",h:"n_c_ss_t_t_",o:["necessitate","eliminate","simplify","contradict"]},{s:"Stochastic epigenetic drift ___ lineage commitment bifurcations.",a:"governs",h:"g_v_rns",o:["governs","prevents","eliminates","simplifies"]},{s:"Chromatin remodeling ___ transcriptional accessibility.",a:"facilitates",h:"f_c_l_t_t_s",o:["facilitates","impedes","eliminates","neutralizes"]},{s:"Inadvertent demethylation could ___ oncogenic translocation.",a:"trigger",h:"tr_gg_r",o:["trigger","prevent","stabilize","neutralize"]}]
+};
+
+const matchD={
+A1:[{p:[{l:"screen",r:"muestra imagenes"},{l:"keyboard",r:"para escribir"},{l:"mouse",r:"para hacer clic"},{l:"processor",r:"cerebro del PC"},{l:"printer",r:"copia en papel"},{l:"battery",r:"almacena energia"}]}],
+A2:[{p:[{l:"algorithm",r:"secuencia de pasos"},{l:"sensor",r:"detecta cambios"},{l:"database",r:"almacena informacion"},{l:"solar panel",r:"convierte luz"},{l:"IoT",r:"internet de las cosas"},{l:"cybersecurity",r:"proteccion de datos"}]}],
+B1:[{p:[{l:"CRISPR",r:"edicion genetica"},{l:"peer review",r:"revision por expertos"},{l:"hypothesis",r:"idea a probar"},{l:"renewable",r:"que no se agota"},{l:"pathogen",r:"causa enfermedades"},{l:"genetic disorder",r:"enfermedad heredada"}]}],
+B2:[{p:[{l:"qubit",r:"bit cuantico"},{l:"decoherence",r:"perdida cuantica"},{l:"entanglement",r:"conexion cuantica"},{l:"encryption",r:"cifrado de datos"},{l:"fault-tolerant",r:"tolerante a fallos"},{l:"superposition",r:"estado simultaneo"}]}],
+C1:[{p:[{l:"neuromorphic",r:"inspirado en cerebro"},{l:"surrogate gradient",r:"gradiente sustituto"},{l:"STDP",r:"plasticidad por disparo"},{l:"co-localization",r:"mismo sustrato"},{l:"spiking neuron",r:"neurona de pulsos"},{l:"asynchronous",r:"sin reloj global"}]}],
+C2:[{p:[{l:"epigenome",r:"capa regulatoria"},{l:"pleiotropic",r:"afecta multiples fenotipos"},{l:"chromatin remodeling",r:"reestructura ADN"},{l:"imprinted loci",r:"genes segun progenitor"},{l:"stochastic",r:"componente aleatorio"},{l:"demethylation",r:"elimina grupos metilo"}]}]
+};
+
+const tfD={
+A1:[{st:"A computer can work without electricity.",a:false,fb:"Las computadoras necesitan electricidad."},{st:"The keyboard is used to type letters.",a:true,fb:"El teclado se usa para escribir."},{st:"A printer shows pictures on a screen.",a:false,fb:"Una impresora hace copias en papel."},{st:"The processor is the brain of the computer.",a:true,fb:"El procesador es el cerebro."}],
+A2:[{st:"IoT devices are never connected to the internet.",a:false,fb:"IoT significa Internet of Things."},{st:"Solar panels produce DC electricity.",a:true,fb:"Los paneles solares producen DC."},{st:"Hackers cannot access IoT devices.",a:false,fb:"Los dispositivos IoT son vulnerables."},{st:"An inverter converts DC to AC electricity.",a:true,fb:"El inversor convierte DC a AC."}],
+B1:[{st:"CRISPR was originally discovered in plants.",a:false,fb:"CRISPR fue descubierto en bacterias."},{st:"Germline editing passes changes to future generations.",a:true,fb:"La edicion germinal es heredable."},{st:"Traditional drug development takes about 5 years.",a:false,fb:"Tarda una media de 12 anos."},{st:"AI can simulate molecular interactions.",a:true,fb:"La IA simula interacciones moleculares."}],
+B2:[{st:"Qubits can only represent either 0 or 1.",a:false,fb:"Los qubits pueden estar en superposicion."},{st:"Decoherence is caused by environment interaction.",a:true,fb:"La decoherencia es causada por el entorno."},{st:"Quantum computers already solve all problems faster.",a:false,fb:"Tienen altas tasas de error."},{st:"Fault-tolerant computing would solve the error problem.",a:true,fb:"Computacion tolerante a fallos."}],
+C1:[{st:"Neuromorphic chips separate memory and processing.",a:false,fb:"Integran memoria y procesamiento."},{st:"Backpropagation maps cleanly onto spike-based computation.",a:false,fb:"No se adapta a computacion de pulsos."},{st:"Loihi 2 consumes microwatts per inference.",a:true,fb:"Consume microwatios por inferencia."},{st:"Asynchronous networks require a global clock.",a:false,fb:"Operan sin reloj global."}],
+C2:[{st:"DNA methylation alters the nucleotide sequence.",a:false,fb:"Modifica expresion sin alterar secuencia."},{st:"Cell transitions are stochastic rather than deterministic.",a:true,fb:"Son estocasticas segun multi-omics."},{st:"Pleiotropic effects make interventions straightforward.",a:false,fb:"Requieren exquisite especificidad."},{st:"Demethylation at imprinted loci could trigger translocation.",a:true,fb:"Podria causar translocacion oncogenica."}]
+};
+
+const saD={
+A1:[{q:"What part of a computer shows images?",a:"screen",al:["monitor","display"],fb:"La pantalla (screen/monitor/display)."},{q:"What provides energy to a computer?",a:"electricity",al:["power"],fb:"Electricidad (electricity/power)."}],
+A2:[{q:"What does IoT stand for?",a:"internet of things",al:["internet of things"],fb:"Internet of Things."},{q:"What converts DC to AC?",a:"inverter",al:["converter"],fb:"El inversor (inverter)."}],
+B1:[{q:"What does CRISPR use to cut DNA?",a:"cas9",al:["cas9 protein"],fb:"La proteina Cas9."},{q:"How many years does drug development take?",a:"twelve years",al:["12 years","12"],fb:"Una media de 12 anos."}],
+B2:[{q:"What allows qubits to be 0 and 1 simultaneously?",a:"superposition",al:["quantum superposition"],fb:"La superposicion cuantica."},{q:"What causes qubits to lose quantum properties?",a:"decoherence",al:["quantum decoherence"],fb:"La decoherencia."}],
+C1:[{q:"What learning rules enable on-chip neuromorphic adaptation?",a:"stdp",al:["spike-timing-dependent plasticity"],fb:"STDP."},{q:"What bottleneck does neuromorphic engineering address?",a:"von neumann",al:["von neumann bottleneck"],fb:"El cuello de botella de von Neumann."}],
+C2:[{q:"What modification adds methyl groups to cytosines?",a:"dna methylation",al:["methylation"],fb:"La metilacion del ADN."},{q:"What drift governs stochastic lineage commitment?",a:"epigenetic drift",al:["probabilistic epigenetic drift"],fb:"La deriva epigenetica probabilistica."}]
+};
+
+const scrD={A1:["cell","water","heart","heat","light"],A2:["sensor","battery","solar","circuit","codec"],B1:["genome","renewable","journal","pathogen","peptide"],B2:["qubit","encryption","chromosome","entangled","nanochip"],C1:["neuromorphic","asynchronous","surrogate","substrate","inference"],C2:["pleiotropic","epigenetic","stochastic","chromatin","methylation"]};
+
+const dictD={
+A1:["The cell is the basic unit of life.","Water is essential for all organisms.","The heart pumps blood through the body."],
+A2:["The sensor detects changes in temperature.","Solar panels convert sunlight into electricity.","The algorithm processes the data efficiently."],
+B1:["The researchers published their findings in a journal.","CRISPR allows precise editing of DNA.","Renewable energy reduces dependence on fossil fuels."],
+B2:["Quantum entanglement enables instantaneous correlation.","Decoherence causes qubits to lose quantum properties.","The process requires nanometer-scale precision."],
+C1:["Neuromorphic chips integrate memory and processing co-located on the same substrate.","Asynchronous spiking networks eliminate the need for a global clock.","Surrogate gradients approximate non-differentiable activation functions."],
+C2:["Pleiotropic epigenetic effects necessitate exquisite locus-specific strategies.","Single-cell multi-omics reveals stochastic probabilistic epigenetic drift.","Chromatin remodeling facilitates transcriptional accessibility at poised enhancers."]
+};
+
+const rdD={
+A1:[{title:"Parts of a Computer",text:`A computer has many <span class="vh" data-word="parts" data-def="partes - componentes">parts</span>. The <span class="vh" data-word="screen" data-def="pantalla - muestra imagenes">screen</span> shows pictures. The <span class="vh" data-word="keyboard" data-def="teclado - para escribir">keyboard</span> has letters. You use the <span class="vh" data-word="mouse" data-def="raton - para hacer clic">mouse</span> to click. The <span class="vh" data-word="processor" data-def="procesador - cerebro del PC">processor</span> is the brain. A <span class="vh" data-word="printer" data-def="impresora - copias en papel">printer</span> makes paper copies. Computers need <span class="vh" data-word="electricity" data-def="electricidad - energia">electricity</span> to work.`,q:[{qt:"What does the screen do?",o:["Prints paper","Shows pictures","Types letters","Saves files"],c:1,fb:"La pantalla muestra imagenes."},{qt:"What is the processor?",o:["A printer","The brain","A mouse","A screen"],c:1,fb:"El procesador es el cerebro."},{qt:"What does a printer do?",o:["Paper copies","Shows pictures","Clicks things","Provides electricity"],c:0,fb:"Hace copias en papel."},{qt:"What do computers need?",o:["Water","Electricity","Paper","Sunlight"],c:1,fb:"Necesitan electricidad."}]}],
+A2:[{title:"What Is the Internet of Things?",text:`The Internet of Things, or <span class="vh" data-word="IoT" data-def="Internet de las Cosas">IoT</span>, is a system of connected devices. A <span class="vh" data-word="smart thermostat" data-def="termostato inteligente">smart thermostat</span> learns when you are home. A <span class="vh" data-word="wearable" data-def="dispositivo que se lleva puesto">wearable</span> like a smartwatch counts your steps. In a <span class="vh" data-word="smart home" data-def="hogar inteligente">smart home</span>, lights turn off automatically. Farmers use IoT <span class="vh" data-word="sensors" data-def="sensores - detectan cambios">sensors</span> to measure water. However, <span class="vh" data-word="hackers" data-def="hackers - acceden sin permiso">hackers</span> might try to access devices. That is why <span class="vh" data-word="cybersecurity" data-def="ciberseguridad">cybersecurity</span> is important.`,q:[{qt:"What does IoT stand for?",o:["Internet of Things","Internet of Transfers","Internal Operating Tech","Interconnected Objects"],c:0,fb:"Internet of Things."},{qt:"What can a smart thermostat do?",o:["Make calls","Adjust temperature","Cook food","Connect to printer"],c:1,fb:"Ajusta la temperatura automaticamente."},{qt:"Why is cybersecurity important?",o:["Faster devices","Cheaper cost","Hackers might access devices","Better WiFi"],c:2,fb:"Los hackers pueden acceder."},{qt:"How do farmers use IoT?",o:["Count animals","Measure water in soil","Drive tractors","Sell online"],c:1,fb:"Sensan agua en la tierra."}]}],
+B1:[{title:"CRISPR: Editing the Code of Life",text:`<span class="vh" data-word="CRISPR" data-def="tecnologia de edicion genetica">CRISPR</span> allows scientists to edit <span class="vh" data-word="DNA" data-def="acido desoxirribonucleico">DNA</span> with precision. Discovered in <span class="vh" data-word="bacteria" data-def="bacterias - microorganismos">bacteria</span> as a defense mechanism, it was adapted by Doudna and Charpentier, who won the Nobel Prize in Chemistry 2020.\n\nThe system works like molecular scissors. A <span class="vh" data-word="guide RNA" data-def="ARN guia - dirige la edicion">guide RNA</span> leads the <span class="vh" data-word="Cas9" data-def="proteina que corta ADN">Cas9</span> protein to a specific location. Scientists can remove, add, or replace <span class="vh" data-word="genetic material" data-def="material genetico">genetic material</span>.\n\nApplications include treating <span class="vh" data-word="genetic disorders" data-def="enfermedades geneticas">genetic disorders</span>, creating <span class="vh" data-word="disease-resistant" data-def="resistente a enfermedades">disease-resistant</span> crops. Ethical concerns remain, especially regarding <span class="vh" data-word="germline editing" data-def="edicion heredable">germline editing</span>.`,q:[{qt:"Where was CRISPR discovered?",o:["Laboratory","Bacteria","Plants","Human cells"],c:1,fb:"En bacterias."},{qt:"What role does guide RNA play?",o:["Cuts DNA","Leads Cas9 to target","Creates new DNA","Protects cell"],c:1,fb:"Dirige Cas9 al blanco."},{qt:"Why is germline editing controversial?",o:["Expensive","Changes inherited by future generations","Uses too much energy","Only in bacteria"],c:1,fb:"Los cambios se heredan."},{qt:"Who won the Nobel for CRISPR?",o:["Curie & Franklin","Doudna & Charpentier","Watson & Crick","Einstein & Bohr"],c:1,fb:"Doudna y Charpentier, Nobel 2020."}]}],
+B2:[{title:"Quantum Computing: Beyond Binary",text:`Classical computers use <span class="vh" data-word="bits" data-def="0 o 1">bits</span>. <span class="vh" data-word="Quantum computers" data-def="ordenadores cuanticos">Quantum computers</span> use <span class="vh" data-word="qubits" data-def="bits cuanticos">qubits</span>, which can exist in <span class="vh" data-word="superposition" data-def="0 y 1 simultaneamente">superposition</span>. Combined with <span class="vh" data-word="entanglement" data-def="conexion cuantica">entanglement</span>, this allows parallel processing.\n\nApplications: breaking <span class="vh" data-word="encryption" data-def="cifrado">encryption</span>, simulating <span class="vh" data-word="molecular structures" data-def="estructuras moleculares">molecular structures</span>, optimizing <span class="vh" data-word="logistics" data-def="logistica">logistics</span>.\n\nHowever, <span class="vh" data-word="decoherence" data-def="perdida cuantica">decoherence</span> causes qubits to lose quantum properties. This requires extreme cold and <span class="vh" data-word="error correction" data-def="correccion de errores">error correction</span>. Researchers aim for <span class="vh" data-word="fault-tolerant" data-def="tolerante a fallos">fault-tolerant</span> computing.`,q:[{qt:"Key difference between bits and qubits?",o:["Qubits smaller","Qubits: superposition","Bits faster","Bits use less energy"],c:1,fb:"Superposicion."},{qt:"What causes decoherence?",o:["Software bugs","Environment interaction","Low power","Too many calculations"],c:1,fb:"Interaccion con el entorno."},{qt:"NOT mentioned as quantum application?",o:["Encryption","Drug discovery","Weather forecasting","Logistics"],c:2,fb:"No se menciona clima."},{qt:"What does fault-tolerant mean?",o:["Never errors","Works even with errors","High temperatures","Classical bits"],c:1,fb:"Funciona con errores presentes."}]}],
+C1:[{title:"Neuromorphic Engineering",text:`<span class="vh" data-word="Neuromorphic engineering" data-def="computacion inspirada en cerebro">Neuromorphic engineering</span> replicates neural systems in silicon. Unlike <span class="vh" data-word="von Neumann" data-def="memoria y procesador separados">von Neumann</span> architecture—creating the <span class="vh" data-word="bottleneck" data-def="cuello de botella">bottleneck</span>—neuromorphic chips integrate <span class="vh" data-word="synaptic weights" data-def="pesos sinapticos">synaptic weights</span> and <span class="vh" data-word="spiking neurons" data-def="neuronas de disparo">spiking neurons</span> co-located.\n\nThis <span class="vh" data-word="co-localization" data-def="en el mismo lugar">co-localization</span> reduces energy drastically. Intel's Loihi 2 consumes microwatts per <span class="vh" data-word="inference" data-def="inferencia">inference</span>. The <span class="vh" data-word="asynchronous" data-def="sin reloj global">asynchronous</span> nature eliminates global clocks.\n\nTraining challenges persist: <span class="vh" data-word="backpropagation" data-def="propagacion hacia atras">backpropagation</span> doesn't map to <span class="vh" data-word="spike-based" data-def="basado en pulsos">spike-based</span> computation. <span class="vh" data-word="Surrogate gradient" data-def="gradiente sustituto">Surrogate gradient</span> methods and <span class="vh" data-word="STDP" data-def="plasticidad por tiempo de disparo">STDP</span> aim to enable <span class="vh" data-word="on-chip learning" data-def="aprendizaje en chip">on-chip learning</span>.`,q:[{qt:"What problem does neuromorphic address?",o:["Quantum decoherence","Von Neumann bottleneck","Solar efficiency","CRISPR off-target"],c:1,fb:"El cuello de botella de von Neumann."},{qt:"Why does co-localization save energy?",o:["Smaller transistors","Minimizes data movement","No electricity","Quantum tunneling"],c:1,fb:"Reduce movimiento de datos."},{qt:"Training challenge?",o:["Insufficient data","Backprop doesn't map to spikes","Too much memory","Overheating"],c:1,fb:"Backprop no se adapta."},{qt:"What does STDP stand for?",o:["Short-Term Data Processing","Spike-Timing-Dependent Plasticity","Systematic Training","Synchronous Protocol"],c:1,fb:"Spike-Timing-Dependent Plasticity."}]}],
+C2:[{title:"Epigenetic Landscape",text:`The <span class="vh" data-word="epigenome" data-def="capa regulatoria sobre ADN">epigenome</span> modulates gene expression without altering the <span class="vh" data-word="nucleotide sequence" data-def="secuencia de bases">nucleotide sequence</span>. <span class="vh" data-word="DNA methylation" data-def="metilacion del ADN">DNA methylation</span>, <span class="vh" data-word="histone modification" data-def="modificacion de histonas">histone modifications</span>, and <span class="vh" data-word="chromatin remodeling" data-def="remodelado de cromatina">chromatin remodeling</span> govern <span class="vh" data-word="transcriptional accessibility" data-def="accesibilidad para lectura">transcriptional accessibility</span>.\n\nWaddington's <span class="vh" data-word="epigenetic landscape" data-def="metafora de rutas de desarrollo">epigenetic landscape</span> captures how <span class="vh" data-word="pluripotent" data-def="capaz de diferenciarse">pluripotent</span> cells navigate <span class="vh" data-word="lineage commitments" data-def="compromisos de linaje">lineage commitments</span>. <span class="vh" data-word="single-cell multi-omics" data-def="multi-omicas de celula unica">Single-cell multi-omics</span> reveals <span class="vh" data-word="stochastic" data-def="con componente aleatorio">stochastic</span> transitions governed by <span class="vh" data-word="probabilistic epigenetic drift" data-def="deriva epigenetica probabilistica">probabilistic epigenetic drift</span>.\n\n<span class="vh" data-word="Epigenetic drugs" data-def="farmacos epigeneticos">Epigenetic drugs</span> can reactivate <span class="vh" data-word="tumor suppressor genes" data-def="genes supresores de tumores">tumor suppressor genes</span>. However, <span class="vh" data-word="pleiotropic effects" data-def="efectos multiples">pleiotropic effects</span> demand exquisite <span class="vh" data-word="specificity" data-def="especificidad">specificity</span>, as <span class="vh" data-word="demethylation" data-def="desmetilacion">demethylation</span> at <span class="vh" data-word="imprinted loci" data-def="loci imputados">imprinted loci</span> could trigger <span class="vh" data-word="oncogenic translocation" data-def="translocacion oncogenica">oncogenic translocation</span>.`,q:[{qt:"What does the epigenome modulate without changing?",o:["Protein folding","Nucleotide sequence","Cell membrane","Mitochondrial DNA"],c:1,fb:"Modula sin alterar la secuencia."},{qt:"What does Waddington's landscape describe?",o:["Protein folding","Cell differentiation routes","Neural training","Quantum transitions"],c:1,fb:"Rutas de diferenciacion."},{qt:"What did multi-omics reveal?",o:["Deterministic","Stochastic drift","Irreversible","Linear"],c:1,fb:"Transiciones estocasticas."},{qt:"Why is specificity critical for epigenetic drugs?",o:["Too expensive","Demethylation could trigger translocation","Patient immunity","Only in vitro"],c:1,fb:"Podria causar translocacion oncogenica."}]}]
+};
+
+const lwD={
+A1:[{s:"The cell is the basic unit of life.",w:["cell","basic","unit","life","water","energy"]},{s:"Water boils at one hundred degrees.",w:["water","boils","hundred","degrees","ice","hot"]},{s:"Plants need sunlight and water to grow.",w:["plants","sunlight","water","grow","moon","dark"]}],
+A2:[{s:"The algorithm processes data step by step.",w:["algorithm","processes","data","step","hardware","screen"]},{s:"Sensors detect changes in temperature.",w:["sensors","detect","temperature","pressure","keyboard","signal"]},{s:"Solar panels convert sunlight into energy.",w:["solar","panels","convert","sunlight","energy","wind"]}],
+B1:[{s:"The researchers published findings in a journal.",w:["researchers","published","findings","journal","newspaper","blog"]},{s:"Genetic modification produces disease-resistant crops.",w:["genetic","modification","disease-resistant","crop","weather","organic"]},{s:"The clinical trial demonstrated significant improvement.",w:["clinical","trial","demonstrated","significant","improvement","failure"]}],
+B2:[{s:"Quantum entanglement enables instantaneous correlation.",w:["quantum","entanglement","enables","instantaneous","correlation","gravity"]},{s:"The semiconductor process requires nanometer precision.",w:["semiconductor","process","nanometer","precision","macroscopic","software"]}],
+C1:[{s:"Asynchronous spiking networks circumvent clock-driven limitations.",w:["asynchronous","spiking","networks","circumvent","clock-driven","synchronous"]},{s:"Surrogate gradients approximate non-differentiable activation.",w:["surrogate","gradient","approximate","non-differentiable","activation","static"]}],
+C2:[{s:"Pleiotropic epigenetic effects necessitate locus-specific strategies.",w:["pleiotropic","epigenetic","necessitate","locus-specific","strategies","polymorphic"]}]
+};
+
+const lectD=[{title:"AI in Healthcare",text:"Good morning. Today I'll discuss how AI is transforming healthcare. Deep learning algorithms can detect early signs of cancer in X-rays and MRI scans, sometimes more accurately than human radiologists. These systems train on thousands of medical images, learning patterns invisible to the human eye. Another application is drug discovery: traditional development takes twelve years and costs billions. AI can simulate molecular interactions, predicting which compounds work, reducing time and cost. However, patient data privacy remains a major concern. AI needs large datasets, but this data is extremely sensitive. We need robust frameworks protecting information while allowing innovation.",q:[{qt:"What can deep learning detect?",o:["Patient names","Early cancer signs","Hospital locations","Equipment failures"],c:1,fb:"Detecta signos tempranos de cancer."},{qt:"How long does drug development take?",o:["5 years","8 years","12 years","20 years"],c:2,fb:"Una media de 12 anos."},{qt:"Main concern about AI in healthcare?",o:["Electricity cost","Data privacy","Lack of computers","Too many doctors"],c:1,fb:"Privacidad de datos."},{qt:"How does AI help drug discovery?",o:["Replacing scientists","Simulating molecular interactions","Manufacturing drugs","Testing on patients"],c:1,fb:"Simula interacciones moleculares."}]},{title:"Renewable Energy Storage",text:"One of the biggest challenges in renewable energy is storage. Solar panels produce electricity during the day, but people need power at night. Wind turbines generate energy when it's windy, but calm days leave the grid short. Battery technology is crucial. Lithium-ion batteries are common but degrade over time, can overheat, and lithium mining has environmental impacts. Researchers are exploring solid-state batteries with solid electrolyte, making them safer. Flow batteries store energy in liquid solutions. Green hydrogen is also promising: excess renewable electricity splits water into hydrogen and oxygen through electrolysis. Most experts agree a combination of solutions is needed.",q:[{qt:"Why is energy storage important?",o:["Make panels bigger","Supply and demand mismatch","Stop using batteries","More wind"],c:1,fb:"Oferta y demanda no coinciden."},{qt:"What limits lithium-ion batteries?",o:["Too small","They degrade over time","Too much energy","Too cheap"],c:1,fb:"Se degradan."},{qt:"What makes solid-state different?",o:["Uses gas","Solid electrolyte","No electrolyte","Only lithium"],c:1,fb:"Electrolito solido."},{qt:"How is green hydrogen produced?",o:["Burning gas","Splitting water with renewable electricity","Mining","Compressing air"],c:1,fb:"Electrolisis del agua."}]}];
+
+const wrD={
+A1:{p:"Write 5-8 sentences about your favorite technology. What devices do you use? Why are they useful?",kw:["phone","computer","internet","useful","screen","battery","app","camera"],mn:30},
+A2:{p:"Write a paragraph (50-80 words) about how a smartphone works. What can you do with it?",kw:["smartphone","screen","apps","connect","battery","camera","internet","communication"],mn:50},
+B1:{p:"Write an essay (100-150 words) on why data privacy matters in the age of AI.",kw:["privacy","algorithm","consent","surveillance","data protection","encryption","GDPR","personal data"],mn:80},
+B2:{p:"Write a critical analysis (150-200 words) on autonomous vehicles. Address safety, ethics, and regulation.",kw:["autonomous","sensor","LiDAR","regulation","safety","algorithm","ethics","liability"],mn:120},
+C1:{p:"Write a commentary (200-250 words) on neuromorphic computing implications for AI.",kw:["neuromorphic","spiking","von Neumann","bottleneck","asynchronous","inference","synaptic","surrogate"],mn:160},
+C2:{p:"Write a scholarly critique (250-350 words) evaluating the epigenetic landscape paradigm and therapeutic viability.",kw:["epigenome","methylation","stochastic","pluripotent","lineage","pleiotropic","imprinted loci","multi-omics"],mn:200}
+};
+
+const spkV={
+A1:[{w:"cell",ph:"/sel/",m:"celula",cx:"The cell is the basic unit of life."},{w:"energy",ph:"/ˈɛnərdʒi/",m:"energia",cx:"Plants convert sunlight into energy."},{w:"water",ph:"/ˈwɔːtər/",m:"agua",cx:"Water is essential for organisms."},{w:"heat",ph:"/hiːt/",m:"calor",cx:"Heat makes molecules move faster."}],
+A2:[{w:"algorithm",ph:"/ˈælɡərɪðəm/",m:"algoritmo",cx:"The algorithm sorts data efficiently."},{w:"sensor",ph:"/ˈsɛnsər/",m:"sensor",cx:"The sensor detects temperature."},{w:"database",ph:"/ˈdeɪtəbeɪs/",m:"base de datos",cx:"Records are stored in the database."},{w:"variable",ph:"/ˈvɛəriəbl/",m:"variable",cx:"The variable was adjusted."}],
+B1:[{w:"hypothesis",ph:"/haɪˈpɒθəsɪs/",m:"hipotesis",cx:"The hypothesis was tested."},{w:"cybersecurity",ph:"/ˌsaɪbərsɪˈkjʊərɪti/",m:"ciberseguridad",cx:"Cybersecurity protects systems."},{w:"photosynthesis",ph:"/ˌfoʊtoʊˈsɪnθəsɪs/",m:"fotosintesis",cx:"Plants use photosynthesis."},{w:"biodiversity",ph:"/ˌbaɪoʊdaɪˈvɜːrsɪti/",m:"biodiversidad",cx:"Biodiversity loss threatens ecosystems."}],
+B2:[{w:"chromosome",ph:"/ˈkroʊməsoʊm/",m:"cromosoma",cx:"Humans have 23 pairs of chromosomes."},{w:"thermodynamics",ph:"/ˌθɜːrmoʊdaɪˈnæmɪks/",m:"termodinamica",cx:"The second law describes entropy."},{w:"nanotechnology",ph:"/ˌnænoʊtɛkˈnɒlədʒi/",m:"nanotecnologia",cx:"Nanotechnology operates at molecular scale."},{w:"electromagnetic",ph:"/ɪˌlɛktroʊmæɡˈnɛtɪk/",m:"electromagnetico",cx:"EM waves travel at light speed."}],
+C1:[{w:"neuromorphic",ph:"/ˌnjʊəroʊˈmɔːrfɪk/",m:"neuromorfico",cx:"Neuromorphic chips mimic the brain."},{w:"decoherence",ph:"/ˌdiːkoʊˈhɪərəns/",m:"decoherencia",cx:"Decoherence destroys superposition."},{w:"asynchronous",ph:"/eɪˈsɪŋkrənəs/",m:"asincrono",cx:"Asynchronous networks lack global clocks."},{w:"surrogate",ph:"/ˈsʌrəɡeɪt/",m:"sustituto",cx:"Surrogate gradients approximate functions."}],
+C2:[{w:"pleiotropic",ph:"/plaɪəˈtrɒpɪk/",m:"pleiotropico",cx:"Pleiotropic genes affect multiple phenotypes."},{w:"epigenetic",ph:"/ˌɛpɪdʒɪˈnɛtɪk/",m:"epigenetico",cx:"Epigenetic modifications regulate genes."},{w:"stochastic",ph:"/stəˈkæstɪk/",m:"estocastico",cx:"Stochastic processes involve randomness."},{w:"translocation",ph:"/ˌtrænzloʊˈkeɪʃən/",m:"translocacion",cx:"Translocation can cause cancer."}]
+};
+
+const chatT=[{id:'ai',title:'Artificial Intelligence',lv:'B1',ic:'fa-brain',ds:'Discuss AI impact on society.',kw:['artificial intelligence','machine learning','automation','algorithm','neural network','data','privacy','bias','employment','healthcare'],gr:"Hello! I'm Nova, your AI research assistant. Let's explore artificial intelligence. What are your thoughts on AI?",rp:[{t:['hello','hi','hey','good morning','greetings'],r:"Hello! What do you know about AI? Have you used any AI tools recently?"},{t:['benefit','good','help','useful','advantage','positive','improve'],r:"AI has many benefits - from medical diagnostics to climate modeling. But some worry about job displacement. What's your opinion?"},{t:['job','employment','work','replace','displacement','career'],r:"While AI may replace some jobs, it creates new opportunities. Should education systems adapt?"},{t:['education','learn','school','university','train','teach'],r:"Education needs to evolve. Critical thinking becomes more valuable. Can AI be truly creative?"},{t:['creative','creativity','art','music','write','original','imagination'],r:"AI generates art and music, but is that 'true creativity'? Could AI ever become conscious?"},{t:['conscious','consciousness','aware','sentient','think','mind','feel'],r:"AI lacks true consciousness currently. What ethical guidelines do we need?"},{t:['ethic','ethical','moral','responsible','regulation','law','right','wrong'],r:"Ethical AI is crucial: bias, privacy, transparency. Should governments regulate strictly?"},{t:['government','regulate','law','policy','control','ban'],r:"Regulation balances innovation with safety. The EU's AI Act is one approach. Would you like to summarize your views?"},{t:['bias','fair','unfair','discrimination','prejudice'],r:"AI bias is real - systems perpetuate training data biases. How important are diverse teams?"},{t:['privacy','data','personal','surveillance','track'],r:"Data privacy is fundamental. Laws like GDPR protect individuals. Do people understand data usage?"},{t:['yes','agree','correct','right','exactly','absolutely'],r:"Great! Can you elaborate? What aspects of AI concern or excite you most?"},{t:['no','disagree','wrong','not','never'],r:"Your perspective matters. Can you explain your reasoning?"},{t:['thank','thanks','bye','goodbye','end','finish'],r:"Thank you for this engaging conversation! Keep exploring. Goodbye!"}],fb:"Interesting! Could you tell me more about your perspective on AI? How does it affect daily life?"},
+{id:'climate',title:'Climate Change',lv:'B1',ic:'fa-temperature-high',ds:'Discuss causes and solutions.',kw:['climate','carbon','emissions','fossil','renewable','temperature','glacier','greenhouse','deforestation','sustainability','solar','wind'],gr:"Hi! I'm Terra, a climate science communicator. Let's discuss climate change. Is it a serious issue?",rp:[{t:['hello','hi','hey'],r:"Welcome! What do you know about climate change causes?"},{t:['cause','fossil','fuel','coal','oil','gas','emission','carbon','co2'],r:"Burning fossil fuels releases CO2, trapping heat - the greenhouse effect. Heard about renewables?"},{t:['renewable','solar','wind','hydro','clean energy'],r:"Renewables are key! Solar and wind are much cheaper now. But storage remains challenging. What solutions interest you?"},{t:['battery','storage','hydrogen','grid','lithium'],r:"Batteries and green hydrogen are promising. What environmental impacts concern you most?"},{t:['glacier','ice','sea level','ocean','flood'],r:"Rising seas threaten coasts. Glaciers melt rapidly. What about biodiversity?"},{t:['biodiversity','species','extinct','ecosystem','habitat'],r:"Biodiversity loss is devastating. What can individuals do?"},{t:['recycle','reduce','individual','personal','lifestyle','diet'],r:"Individual actions matter! But systemic change is also needed. What role should governments play?"},{t:['government','policy','paris','agreement','regulation'],r:"The Paris Agreement aims for 1.5 degrees. Are commitments being met fast enough?"},{t:['agree','yes','correct'],r:"I agree! Can you expand? What climate actions would you prioritize?"},{t:['disagree','no','wrong'],r:"Your perspective matters. Could you explain your reasoning?"},{t:['thank','bye','goodbye'],r:"Wonderful discussion! Keep learning and acting. Goodbye!"}],fb:"Interesting! What are the biggest effects of global warming, or what solutions seem most promising?"},
+{id:'biotech',title:'Biotechnology',lv:'B2',ic:'fa-dna',ds:'Discuss genetic engineering and bioethics.',kw:['CRISPR','genetic','engineering','gene','DNA','editing','biotechnology','ethical','modification','therapy','genome','cloning'],gr:"Hello! I'm Gene, your biotechnology discussion partner. What's your opinion on editing human genes?",rp:[{t:['hello','hi','hey'],r:"Welcome! What do you know about CRISPR?"},{t:['CRISPR','gene editing','Cas9','genome editing'],r:"CRISPR-Cas9 is revolutionary! Precise DNA modifications. But should we edit embryos?"},{t:['embryo','germline','heritable','inherit','designer baby'],r:"Germline editing passes changes to future generations - consent issues. Where do you draw the line?"},{t:['therapeutic','therapy','treat','disease','cure'],r:"Somatic gene therapy is accepted. Enhancement vs therapy is a gray area. Your view?"},{t:['enhancement','improve','designer','superior','optimize'],r:"Enhancement could widen inequality. How would you regulate it?"},{t:['regulate','regulation','law','ban','restrict'],r:"Regulation varies globally. Do we need a global treaty?"},{t:['agriculture','crop','GMO','food','pest','drought'],r:"GMO crops resist pests. Yet public resistance persists. What concerns people?"},{t:['safe','safety','risk','danger','unknown'],r:"Safety is paramount. How do you balance innovation with safety?"},{t:['ethical','ethic','moral','playing god','natural'],r:"We already modify nature through medicine. Where's the boundary?"},{t:['agree','yes','correct'],r:"Good point! Could you elaborate further?"},{t:['disagree','no','wrong'],r:"I respect that. Can you explain your position?"},{t:['thank','bye','goodbye'],r:"Brilliant discussion! Keep questioning. Farewell!"}],fb:"Thoughtful! Should genetic engineering be used in agriculture, medicine, or both? What boundaries would you set?"},
+{id:'quantum',title:'Quantum Computing',lv:'C1',ic:'fa-atom',ds:'Explore quantum computing principles.',kw:['quantum','qubit','superposition','entanglement','decoherence','fault-tolerant','cryptography','optimization','simulation','error correction'],gr:"Greetings! I'm Quanta. How do quantum computers differ from classical ones?",rp:[{t:['hello','hi','hey'],r:"Welcome! What intrigues you: physics, algorithms, or applications?"},{t:['superposition','qubit','both states','simultaneous'],r:"Superposition enables multiple states simultaneously. With entanglement: exponential parallelism. How do we extract information?"},{t:['measure','measurement','collapse','observe'],r:"Measurement collapses superposition probabilistically. Quantum algorithms ensure correct answers have high probability. Familiar with Shor's algorithm?"},{t:['Shor','factoring','cryptography','encryption','RSA'],r:"Shor's algorithm threatens RSA. Are we prepared for the cryptographic transition?"},{t:['decoherence','noise','error','environment'],r:"Decoherence is the nemesis. Error correction is essential. What approaches interest you?"},{t:['error correction','fault-tolerant','surface code'],r:"Surface codes encode logical qubits across physical ones. Enormous overhead. When will fault-tolerant QC be practical?"},{t:['when','timeline','future','practical','years'],r:"Estimates vary 5-20 years. What applications excite you most?"},{t:['simulation','chemistry','drug','molecule'],r:"Quantum simulation could be the killer app. What about optimization?"},{t:['optimization','logistics','Grover'],r:"Grover's gives quadratic speedup. What are current hardware limitations?"},{t:['NISQ','noisy','intermediate','limitation'],r:"NISQ devices have significant noise. Hybrid approaches are current paradigm. Has quantum advantage been demonstrated?"},{t:['agree','yes','correct'],r:"Well articulated. Could you develop your argument?"},{t:['disagree','no','wrong'],r:"Healthy skepticism! Can you elaborate?"},{t:['thank','bye','goodbye'],r:"Outstanding discussion! Keep exploring. Until next time!"}],fb:"Compelling! What aspects of quantum mechanics seem most counterintuitive, or what applications seem most transformative?"}
+];
+
+// ============ UTILIDADES ============
+function toast(m,t='i'){const c=document.getElementById('toastC'),e=document.createElement('div');e.className='toast '+(t==='s'?'ts':t==='e'?'te':'ti2');e.innerHTML=`<i class="fas fa-${t==='s'?'check-circle':t==='e'?'exclamation-circle':'info-circle'}"></i> ${m}`;c.appendChild(e);setTimeout(()=>e.remove(),3000)}
+function us(){document.getElementById('strk').textContent=S.streak;document.getElementById('xpD').textContent=S.xp;document.getElementById('corD').textContent=S.correct}
+function axp(n){S.xp+=n;us()}
+function lev(a,b){const m=[];for(let i=0;i<=b.length;i++)m[i]=[i];for(let j=0;j<=a.length;j++)m[0][j]=j;for(let i=1;i<=b.length;i++)for(let j=1;j<=a.length;j++)m[i][j]=b[i-1]===a[j-1]?m[i-1][j-1]:Math.min(m[i-1][j-1]+1,m[i][j-1]+1,m[i-1][j]+1);return m[b.length][a.length]}
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function spk(t,r=.9){synthX.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=r;const v=synthX.getVoices().find(x=>x.lang.startsWith('en'));if(v)u.voice=v;synthX.speak(u)}
+function bds(id,levels,cb){const el=document.getElementById(id);el.innerHTML='';levels.forEach(l=>{const b=document.createElement('button');b.className='db'+(l===levels[0]?' on':'');b.textContent=l;b.onclick=()=>{el.querySelectorAll('.db').forEach(x=>x.classList.remove('on'));b.classList.add('on');cb(l)};el.appendChild(b)})}
+
+// Tabs
+document.querySelectorAll('.tb').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.pnl').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('p-'+b.dataset.t).classList.add('on')});
+document.querySelectorAll('.stab').forEach(b=>b.onclick=()=>{const p=b.closest('.pnl');p.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));p.querySelectorAll('.scont').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('s-'+b.dataset.s).classList.add('on')});
+
+// Tooltip
+document.addEventListener('mouseover',e=>{if(e.target.classList.contains('vh')){const t=document.getElementById('vtt');t.querySelector('.vw').textContent=e.target.dataset.word;t.querySelector('.vd').textContent=e.target.dataset.def;t.classList.add('show');const r=e.target.getBoundingClientRect();t.style.top=(r.bottom+8)+'px';t.style.left=Math.min(r.left,window.innerWidth-260)+'px'}});
+document.addEventListener('mouseout',e=>{if(e.target.classList.contains('vh'))document.getElementById('vtt').classList.remove('show')});
+
+// ============ PRACTICA: GAP ============
+function loadGap(){const d=gapD[S.prLv]||gapD.A1;const ds=shuf(d);const a=document.getElementById('gapA');a.innerHTML='';ds.slice(0,4).forEach((g,i)=>{const parts=g.s.split('___');a.innerHTML+=`<div class="qc" id="gq${i}"><div class="qn">Gap ${i+1}</div><div class="gap-s">${parts[0]}<input class="gi" id="gip${i}" placeholder="${g.h}" autocomplete="off">${parts[1]||''}</div><div class="qfb" id="gfb${i}"></div></div>`})}
+document.getElementById('chkGap').onclick=()=>{const d=gapD[S.prLv]||gapD.A1;const ds=shuf(d);let cc=0;ds.slice(0,4).forEach((g,i)=>{const inp=document.getElementById('gip'+i);const fb=document.getElementById('gfb'+i);const card=document.getElementById('gq'+i);const v=inp.value.trim().toLowerCase();if(v===g.a.toLowerCase()){cc++;inp.classList.add('ok');card.classList.add('ok');fb.className='qfb show fok';fb.innerHTML=`<i class="fas fa-check-circle"></i> Correcto!`}else{inp.classList.add('no');card.classList.add('no');fb.className='qfb show fno';fb.innerHTML=`<i class="fas fa-times-circle"></i> Respuesta: <strong>${g.a}</strong>`}});const xp=cc*12;S.correct+=cc;S.streak=cc>=3?S.streak+1:0;axp(xp);toast(`Gaps: ${cc}/4 (+${xp} XP)`,cc>=3?'s':'i')};
+document.getElementById('newGap').onclick=()=>{loadGap()};
+
+// ============ PRACTICA: MATCHING ============
+function loadMatch(){const d=matchD[S.prLv]||matchD.A1;const pairs=d[0].p;const a=document.getElementById('matchA');S.mtSel=null;S.mtDone=0;const leftI=shuf(pairs.map((p,i)=>({...p,idx:i,side:'left'})));const rightI=shuf(pairs.map((p,i)=>({...p,idx:i,side:'right'})));a.innerHTML=`<div class="mgrid"><div class="mcol" id="ml">${leftI.map(it=>`<div class="mitem" data-i="${it.idx}" data-s="left">${it.l}</div>`).join('')}</div><div class="mcol" id="mr">${rightI.map(it=>`<div class="mitem" data-i="${it.idx}" data-s="right">${it.r}</div>`).join('')}</div></div>`;a.querySelectorAll('.mitem').forEach(el=>el.onclick=()=>{if(el.classList.contains('done'))return;if(!S.mtSel){S.mtSel={i:el.dataset.i,s:el.dataset.s,el};el.classList.add('sel')}else{if(S.mtSel.s===el.dataset.s){S.mtSel.el.classList.remove('sel');el.classList.add('sel');S.mtSel={i:el.dataset.i,s:el.dataset.s,el}}else{if(S.mtSel.i===el.dataset.i){S.mtSel.el.classList.remove('sel');S.mtSel.el.classList.add('done');el.classList.remove('sel');el.classList.add('done');S.mtDone++;S.correct++;axp(8);if(S.mtDone===pairs.length){toast(`Matching completo! (+${S.mtDone*8} XP)`,'s');document.getElementById('chkMt').disabled=true}}else{S.mtSel.el.classList.add('wm');el.classList.add('wm');const ref=S.mtSel.el;setTimeout(()=>{ref.classList.remove('wm','sel');el.classList.remove('wm')},500)}S.mtSel=null}}});document.getElementById('chkMt').disabled=false}
+document.getElementById('chkMt').onclick=()=>{toast(`${S.mtDone} pares emparejados`,'s')};
+document.getElementById('newMt').onclick=()=>{loadMatch()};
+
+// ============ PRACTICA: TRUE/FALSE ============
+function loadTf(){const d=tfD[S.prLv]||tfD.A1;const ds=shuf(d);const a=document.getElementById('tfA');a.innerHTML='';ds.slice(0,4).forEach((t,i)=>{a.innerHTML+=`<div class="qc" id="tq${i}"><div class="qn">Statement ${i+1}</div><div class="qt">${t.st}</div><div class="tf-g"><button class="tfb" data-q="${i}" data-v="true"><i class="fas fa-check"></i> True</button><button class="tfb" data-q="${i}" data-v="false"><i class="fas fa-times"></i> False</button></div><div class="qfb" id="tfb${i}"></div></div>`});a.querySelectorAll('.tfb').forEach(b=>b.onclick=()=>{const qi=b.dataset.q;a.querySelectorAll(`.tfb[data-q="${qi}"]`).forEach(x=>x.classList.remove('sel'));b.classList.add('sel')})}
+document.getElementById('chkTf').onclick=()=>{const d=tfD[S.prLv]||tfD.A1;const ds=shuf(d);let cc=0;ds.slice(0,4).forEach((t,i)=>{const card=document.getElementById('tq'+i);const fb=document.getElementById('tfb'+i);const sel=card.querySelector('.tfb.sel');const fv=sel?sel.dataset.v==='true':null;card.querySelectorAll('.tfb').forEach(b=>b.classList.add('dis'));card.querySelector(`.tfb[data-v="${t.a}"]`).classList.add('cat');if(fv===t.a){cc++;card.classList.add('ok');fb.className='qfb show fok';fb.innerHTML=`<i class="fas fa-check-circle"></i> ${t.fb}`}else{if(sel)sel.classList.add('wat');card.classList.add('no');fb.className='qfb show fno';fb.innerHTML=`<i class="fas fa-times-circle"></i> ${t.fb}`}});const xp=cc*12;S.correct+=cc;S.streak=cc>=3?S.streak+1:0;axp(xp);toast(`True/False: ${cc}/4 (+${xp} XP)`,cc>=3?'s':'i')};
+document.getElementById('newTf').onclick=()=>{loadTf()};
+
+// ============ PRACTICA: SHORT ANSWER ============
+function loadSa(){const d=saD[S.prLv]||saD.A1;const ds=shuf(d);const a=document.getElementById('saA');a.innerHTML='';ds.slice(0,3).forEach((s,i)=>{a.innerHTML+=`<div class="qc" id="sq${i}"><div class="qn">Question ${i+1}</div><div class="qt">${s.q}</div><input class="sai" id="sip${i}" placeholder="Type your answer..." autocomplete="off"><div class="qfb" id="sfb${i}"></div></div>`})}
+document.getElementById('chkSa').onclick=()=>{const d=saD[S.prLv]||saD.A1;const ds=shuf(d);let cc=0;ds.slice(0,3).forEach((s,i)=>{const card=document.getElementById('sq'+i);const inp=document.getElementById('sip'+i);const fb=document.getElementById('sfb'+i);const v=inp.value.trim().toLowerCase();const ok=v===s.a.toLowerCase()||s.al.some(a=>a.toLowerCase()===v)||lev(v,s.a.toLowerCase())<=2;if(ok){cc++;card.classList.add('ok');fb.className='qfb show fok';fb.innerHTML=`<i class="fas fa-check-circle"></i> Correcto!`}else{card.classList.add('no');fb.className='qfb show fno';fb.innerHTML=`<i class="fas fa-times-circle"></i> Respuesta: <strong>${s.a}</strong>. ${s.fb}`}});const xp=cc*15;S.correct+=cc;axp(xp);toast(`Short Answer: ${cc}/3 (+${xp} XP)`,cc>=2?'s':'i')};
+document.getElementById('newSa').onclick=()=>{loadSa()};
+
+// ============ PRACTICA: SCRAMBLE ============
+function loadScr(){const words=scrD[S.prLv]||scrD.A1;const w=words[Math.floor(Math.random()*words.length)];S.scrAnswer=w.toUpperCase();const letters=shuf(w.toUpperCase().split(''));const a=document.getElementById('scrA');a.innerHTML=`<div style="text-align:center;margin-bottom:.75rem"><button class="dplay" onclick="spk('${w}',0.7)"><i class="fas fa-volume-up"></i></button><p style="font-size:.72rem;color:var(--muted);margin-top:4px">Escucha la palabra</p></div><div class="scr-w" id="scrLs">${letters.map((l,i)=>`<div class="scr-l" data-i="${i}">${l}</div>`).join('')}</div><div class="scr-a" id="scrAn">${w.split('').map(()=>'<div class="scr-sl"></div>').join('')}</div><p style="text-align:center;font-size:.78rem;color:var(--muted)" id="scrFb"></p>`;let placed=[];const slots=a.querySelectorAll('.scr-sl');const ltrs=a.querySelectorAll('.scr-l');ltrs.forEach(l=>l.onclick=()=>{if(l.classList.contains('pl'))return;l.classList.add('pl');placed.push({letter:l.textContent,el:l});const si=placed.length-1;if(si<slots.length){slots[si].textContent=l.textContent;slots[si].classList.add('fil')}if(placed.length===w.length){const guess=placed.map(p=>p.letter).join('');if(guess===w.toUpperCase()){S.correct++;axp(12);document.getElementById('scrFb').innerHTML=`<span style="color:var(--ok)"><i class="fas fa-check-circle"></i> Correcto! "${w}"</span>`;toast('Palabra correcta! +12 XP','s')}else{document.getElementById('scrFb').innerHTML=`<span style="color:var(--no)"><i class="fas fa-times-circle"></i> Incorrecto. Era "${w}".</span>`;setTimeout(()=>{placed=[];slots.forEach(s=>{s.textContent='';s.classList.remove('fil')});ltrs.forEach(l=>l.classList.remove('pl'))},1500)}}})}
+document.getElementById('newScr').onclick=()=>loadScr();
+
+// ============ PRACTICA: DICTATION ============
+let curDict='';
+function loadDict(){const d=dictD[S.prLv]||dictD.A1;curDict=d[Math.floor(Math.random()*d.length)];const a=document.getElementById('dictA');a.innerHTML=`<div class="dbox"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><button class="dplay" onclick="spk(curDict,.75)"><i class="fas fa-play"></i></button><p style="font-size:.84rem;color:var(--muted)">Escucha y escribe lo que oyes</p></div><textarea class="sai" id="dtInp" rows="3" placeholder="Type what you hear..." style="min-height:70px;resize:vertical"></textarea><div id="dtFb" style="margin-top:8px"></div></div>`}
+document.getElementById('chkDt').onclick=()=>{const inp=document.getElementById('dtInp');const fb=document.getElementById('dtFb');const v=inp.value.trim();if(!v){toast('Escribe algo primero','e');return}const clean=curDict.replace(/[.,!?]/g,'').toLowerCase();const vc=v.replace(/[.,!?]/g,'').toLowerCase();const dist=lev(vc,clean);const maxLen=Math.max(clean.length,1);const pct=Math.round((1-dist/maxLen)*100);if(pct>=90){fb.innerHTML=`<div style="color:var(--ok);font-size:.84rem"><i class="fas fa-check-circle"></i> Excelente! ${pct}% similar</div><p style="color:var(--muted);font-size:.75rem;margin-top:4px">${curDict}</p>`;S.correct++;axp(15)}else if(pct>=60){fb.innerHTML=`<div style="color:var(--wr);font-size:.84rem"><i class="fas fa-exclamation-triangle"></i> Casi! ${pct}% similar</div><p style="color:var(--muted);font-size:.75rem;margin-top:4px">${curDict}</p>`;axp(5)}else{fb.innerHTML=`<div style="color:var(--no);font-size:.84rem"><i class="fas fa-times-circle"></i> ${pct}% similar. Intenta de nuevo.</div>`}};
+document.getElementById('newDt').onclick=()=>{loadDict()};
+
+bds('prDS',LV,l=>{S.prLv=l;loadGap();loadMatch();loadTf();loadSa();loadScr();loadDict()});
+
+// ============ COMPRENSIÓN ESCRITA ============
+function loadRd(){const d=rdD[S.rdLv][S.rdIdx%rdD[S.rdLv].length];document.getElementById('rdP').innerHTML=`<h3 style="margin-bottom:8px;color:var(--em);font-size:.95rem;font-weight:700">${d.title}</h3>`+d.text.replace(/\n/g,'<br><br>');const q=document.getElementById('rdQ');q.innerHTML='';S.rdAns={};document.getElementById('chkRd').disabled=true;document.getElementById('rdR').classList.remove('show');d.q.forEach((qs,i)=>{const c=document.createElement('div');c.className='qc';c.id='rq'+i;c.innerHTML=`<div class="qn">Q${i+1}</div><div class="qt">${qs.qt}</div><div class="qops">${qs.o.map((o,j)=>`<button class="qo" data-q="${i}" data-o="${j}">${o}</button>`).join('')}</div><div class="qfb" id="rqf${i}"></div>`;q.appendChild(c)});q.querySelectorAll('.qo').forEach(b=>b.onclick=()=>{const qi=+b.dataset.q;q.querySelectorAll(`.qo[data-q="${qi}"]`).forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.rdAns[qi]=+b.dataset.o;document.getElementById('chkRd').disabled=Object.keys(S.rdAns).length<d.q.length})}
+document.getElementById('chkRd').onclick=()=>{const d=rdD[S.rdLv][S.rdIdx%rdD[S.rdLv].length];let cc=0;d.q.forEach((qs,i)=>{const card=document.getElementById('rq'+i),fb=document.getElementById('rqf'+i),opts=card.querySelectorAll('.qo'),ua=S.rdAns[i];opts.forEach(o=>o.classList.add('dis'));opts[qs.c].classList.add('ca');if(ua===qs.c){cc++;card.classList.add('ok');fb.className='qfb show fok';fb.innerHTML=`<i class="fas fa-check-circle"></i> ${qs.fb}`}else{if(ua!==undefined)opts[ua].classList.add('wa');card.classList.add('no');fb.className='qfb show fno';fb.innerHTML=`<i class="fas fa-times-circle"></i> ${qs.fb}`}});const t=d.q.length,pct=Math.round(cc/t*100),xp=cc*15;S.correct+=cc;S.streak=cc===t?S.streak+1:0;axp(xp);document.getElementById('rdSc').textContent=pct+'%';document.getElementById('rdC').textContent=cc;document.getElementById('rdI').textContent=t-cc;document.getElementById('rdX').textContent=xp;document.getElementById('rdR').classList.add('show');toast(`Comprension: ${cc}/${t} (+${xp} XP)`,cc===t?'s':'i')};
+document.getElementById('newRd').onclick=()=>{S.rdIdx++;loadRd();toast('Nuevo texto','i')};
+bds('rdDS',LV,l=>{S.rdLv=l;S.rdIdx=0;loadRd()});
+
+// ============ COMPRENSIÓN ORAL: WORDS ============
+function loadLw(){const sents=lwD[S.lsLv]||lwD.A1;const s=sents[S.lsIdx%sents.length];const a=document.getElementById('lwA');a.innerHTML=`<div class="lex"><div class="lsbox"><button class="dplay" onclick="spkLw()"><i class="fas fa-play"></i></button><div style="flex:1;font-size:.84rem;color:var(--muted)" id="lwRv">Pulsa play para escuchar</div></div><p style="font-size:.72rem;color:var(--muted);text-align:center;margin-bottom:.5rem">Selecciona las palabras que escuchaste:</p><div class="wgrid" id="lwG"></div><div class="lnav"><button onclick="S.lsIdx=Math.max(0,S.lsIdx-1);loadLw()"><i class="fas fa-chevron-left"></i></button><span class="lctr">${S.lsIdx%sents.length+1} / ${sents.length}</span><button onclick="S.lsIdx=Math.min(${sents.length-1},S.lsIdx+1);loadLw()"><i class="fas fa-chevron-right"></i></button></div></div>`;const g=document.getElementById('lwG');g.innerHTML='';shuf(s.w).forEach(w=>{const c=document.createElement('button');c.className='wchip';c.textContent=w;c.onclick=()=>c.classList.toggle('sel');g.appendChild(c)});document.getElementById('lwR').classList.remove('show')}
+window.spkLw=function(){const sents=lwD[S.lsLv]||lwD.A1;spk(sents[S.lsIdx%sents.length].s,S.lsSpd)};
+document.getElementById('chkLw').onclick=()=>{const sents=lwD[S.lsLv]||lwD.A1;const s=sents[S.lsIdx%sents.length];const wInS=s.s.replace(/[.,!?]/g,'').toLowerCase().split(/\s+/);const chips=document.querySelectorAll('#lwG .wchip');let cc=0,ww=0,mm=0;chips.forEach(ch=>{const w=ch.textContent.toLowerCase();const inS=wInS.includes(w);if(ch.classList.contains('sel')&&inS){ch.classList.add('cw');ch.classList.remove('sel');cc++}else if(ch.classList.contains('sel')&&!inS){ch.classList.add('ww');ch.classList.remove('sel');ww++}else if(!ch.classList.contains('sel')&&inS){ch.classList.add('mw');mm++}});const tgt=s.w.length;const pct=tgt?Math.round(cc/tgt*100):0;const xp=cc*5;axp(xp);S.correct+=cc;const res=document.getElementById('lwR');res.innerHTML=`<div class="rsc">${pct}%</div><div class="rlbl">Palabras identificadas</div><div class="rdet"><div class="ri"><div class="rv">${cc}</div><div class="rl">Correctas</div></div><div class="ri"><div class="rv">${ww}</div><div class="rl">Incorrectas</div></div><div class="ri"><div class="rv">${mm}</div><div class="rl">Omitidas</div></div></div>`;res.classList.add('show');toast(`Palabras: ${cc}/${tgt} (+${xp} XP)`,cc>=tgt?'s':'i')};
+document.getElementById('revLw').onclick=()=>{const sents=lwD[S.lsLv]||lwD.A1;document.getElementById('lwRv').textContent=sents[S.lsIdx%sents.length].s;document.getElementById('lwRv').style.color='var(--fg)'};
+bds('lsDS',LV,l=>{S.lsLv=l;S.lsIdx=0;loadLw()});
+
+// ============ COMPRENSIÓN ORAL: LECTURES ============
+function loadLl(){const d=lectD[S.llIdx%lectD.length];const a=document.getElementById('llA');a.innerHTML=`<div class="aucard"><div class="auvis" id="auV" onclick="togLl()"><div class="ring"></div><i class="fas fa-play" id="auI"></i></div><div class="auctrls"><button class="abtn" onclick="playLl()"><i class="fas fa-play"></i></button><button class="abtn" onclick="synthX.pause()"><i class="fas fa-pause"></i></button><button class="abtn" onclick="synthX.cancel();S.isSpeaking=false;document.getElementById('auV').classList.remove('playing');document.getElementById('auI').className='fas fa-play'"><i class="fas fa-stop"></i></button><button class="abtn" onclick="synthX.cancel();S.isSpeaking=false;setTimeout(playLl,100)"><i class="fas fa-redo"></i></button></div><div style="font-size:.7rem;color:var(--muted);margin-top:4px" id="spL">Velocidad: 0.8x</div><div class="dsel" style="display:inline-flex;margin-top:5px" id="spS"></div><div class="pbar"><div class="pbar-f" id="llPr" style="width:0%"></div></div></div><button class="btns" id="tgTb" style="margin-bottom:.75rem"><i class="fas fa-file-alt"></i> Transcripcion</button><div class="tbox" id="llTb"><p>${d.text}</p></div><div class="qgrid" id="llQ"></div><div class="acts"><button class="btnp" id="chkLl" disabled><i class="fas fa-check"></i> Comprobar</button><button class="btns" id="newLl"><i class="fas fa-redo"></i> Nueva</button></div><div class="rpnl" id="llR"></div>`;bds('spS',['0.6','0.8','1.0','1.3'],l=>{S.lsSpd=parseFloat(l);document.getElementById('spL').textContent='Velocidad: '+l+'x'});document.getElementById('tgTb').onclick=()=>{const b=document.getElementById('llTb');b.classList.toggle('show');document.getElementById('tgTb').innerHTML=b.classList.contains('show')?'<i class="fas fa-eye-slash"></i> Ocultar':'<i class="fas fa-file-alt"></i> Transcripcion'};const q=document.getElementById('llQ');q.innerHTML='';S.llAns={};d.q.forEach((qs,i)=>{const c=document.createElement('div');c.className='qc';c.id='lq'+i;c.innerHTML=`<div class="qn">Q${i+1}</div><div class="qt">${qs.qt}</div><div class="qops">${qs.o.map((o,j)=>`<button class="qo" data-q="${i}" data-o="${j}">${o}</button>`).join('')}</div><div class="qfb" id="lqf${i}"></div>`;q.appendChild(c)});q.querySelectorAll('.qo').forEach(b=>b.onclick=()=>{const qi=+b.dataset.q;q.querySelectorAll(`.qo[data-q="${qi}"]`).forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.llAns[qi]=+b.dataset.o;document.getElementById('chkLl').disabled=Object.keys(S.llAns).length<d.q.length});document.getElementById('chkLl').onclick=()=>{let cc=0;d.q.forEach((qs,i)=>{const card=document.getElementById('lq'+i),fb=document.getElementById('lqf'+i),opts=card.querySelectorAll('.qo'),ua=S.llAns[i];opts.forEach(o=>o.classList.add('dis'));opts[qs.c].classList.add('ca');if(ua===qs.c){cc++;card.classList.add('ok');fb.className='qfb show fok';fb.innerHTML=`<i class="fas fa-check-circle"></i> ${qs.fb}`}else{if(ua!==undefined)opts[ua].classList.add('wa');card.classList.add('no');fb.className='qfb show fno';fb.innerHTML=`<i class="fas fa-times-circle"></i> ${qs.fb}`}});const t=d.q.length,pct=Math.round(cc/t*100),xp=cc*20;S.correct+=cc;axp(xp);const res=document.getElementById('llR');res.innerHTML=`<div class="rsc">${pct}%</div><div class="rlbl">Comprension oral</div><div class="rdet"><div class="ri"><div class="rv">${cc}</div><div class="rl">Correctas</div></div><div class="ri"><div class="rv">${t-cc}</div><div class="rl">Incorrectas</div></div><div class="ri"><div class="rv">${xp}</div><div class="rl">XP</div></div></div>`;res.classList.add('show');toast(`Conferencia: ${cc}/${t} (+${xp} XP)`,cc===t?'s':'i')};document.getElementById('newLl').onclick=()=>{S.llIdx++;loadLl();toast('Nueva conferencia','i')}}
+window.playLl=function(){if(S.isSpeaking)return;const d=lectD[S.llIdx%lectD.length];synthX.cancel();const u=new SpeechSynthesisUtterance(d.text);u.lang='en-US';u.rate=S.lsSpd;const v=synthX.getVoices().find(x=>x.lang.startsWith('en'));if(v)u.voice=v;const vis=document.getElementById('auV'),ico=document.getElementById('auI');u.onstart=()=>{S.isSpeaking=true;vis.classList.add('playing');ico.className='fas fa-volume-up'};u.onend=()=>{S.isSpeaking=false;vis.classList.remove('playing');ico.className='fas fa-play';const p=document.getElementById('llPr');if(p)p.style.width='100%'};u.onboundary=e=>{if(e.charIndex){const p=document.getElementById('llPr');if(p)p.style.width=Math.min(100,Math.round(e.charIndex/d.text.length*100))+'%'}};synthX.speak(u)};
+window.togLl=function(){if(S.isSpeaking){synthX.cancel();S.isSpeaking=false;document.getElementById('auV').classList.remove('playing');document.getElementById('auI').className='fas fa-play'}else playLl()};
+
+// ============ COMPRENSIÓN ORAL: GAP LISTENING ============
+function loadLg(){const d=gapD[S.lsLv]||gapD.A1;const ds=shuf(d);const a=document.getElementById('lgA');a.innerHTML='';ds.slice(0,3).forEach((g,i)=>{const parts=g.s.split('___');const safeSent=g.s.replace(/___/,'BLANK').replace(/'/g,"\\'");a.innerHTML+=`<div class="qc" id="lgq${i}"><div class="qn">Listen & Fill ${i+1}</div><div style="margin-bottom:6px"><button class="dplay" onclick="spk('${safeSent}',.75)"><i class="fas fa-play"></i></button></div><div class="gap-s">${parts[0]}<input class="gi" id="lgi${i}" placeholder="..." autocomplete="off">${parts[1]||''}</div><div class="qfb" id="lgf${i}"></div></div>`})}
+document.getElementById('chkLg').onclick=()=>{const d=gapD[S.lsLv]||gapD.A1;const ds=shuf(d);let cc=0;ds.slice(0,3).forEach((g,i)=>{const inp=document.getElementById('lgi'+i);const fb=document.getElementById('lgf'+i);const card=document.getElementById('lgq'+i);const v=inp.value.trim().toLowerCase();if(v===g.a.toLowerCase()){cc++;inp.classList.add('ok');card.classList.add('ok');fb.className='qfb show fok';fb.innerHTML=`<i class="fas fa-check-circle"></i> Correcto!`}else{inp.classList.add('no');card.classList.add('no');fb.className='qfb show fno';fb.innerHTML=`<i class="fas fa-times-circle"></i> Respuesta: <strong>${g.a}</strong>`}});const xp=cc*12;S.correct+=cc;axp(xp);toast(`Gap Listening: ${cc}/3 (+${xp} XP)`,cc>=2?'s':'i')};
+document.getElementById('newLg').onclick=()=>{loadLg()};
+
+// ============ EXPRESIÓN ESCRITA ============
+function loadWr(){const d=wrD[S.wrLv];document.getElementById('wrT').textContent=d.p;document.getElementById('wmw').textContent=d.mn;const kw=document.getElementById('wrK');kw.innerHTML='';d.kw.forEach(k=>{const t=document.createElement('span');t.className='kwt';t.textContent=k;kw.appendChild(t)});document.getElementById('wrA').value='';document.getElementById('wwc').textContent='0';document.getElementById('wcc').textContent='0';document.getElementById('wsc').textContent='0';document.getElementById('wrFb').classList.remove('show')}
+document.getElementById('wrA').addEventListener('input',function(){const t=this.value.trim(),w=t?t.split(/\s+/).length:0;document.getElementById('wwc').textContent=w;document.getElementById('wcc').textContent=this.value.length;document.getElementById('wsc').textContent=t?(t.match(/[.!?]+/g)||[]).length||(w?1:0):0});
+document.getElementById('subWr').onclick=()=>{const text=document.getElementById('wrA').value.trim();if(!text){toast('Escribe algo primero','e');return}const words=text.split(/\s+/),wc=words.length,d=wrD[S.wrLv],sents=(text.match(/[.!?]+/g)||[]).length||(wc?1:0),tl=text.toLowerCase();const fb=[];const conns=['however','moreover','furthermore','therefore','consequently','in addition','although','while','because','since','thus','nevertheless','on the other hand','as a result','for example','in conclusion','whereas','despite'];if(wc>=d.mn)fb.push({c:'fg',t:`Longitud adecuada: ${wc} palabras.`});else fb.push({c:'fw',t:`Solo ${wc} palabras (min: ${d.mn}).`});if(sents>=5)fb.push({c:'fg',t:`Buena estructura: ${sents} oraciones.`});else fb.push({c:'fw',t:`${sents} oraciones. Desarrolla mas.`});const uk=d.kw.filter(k=>tl.includes(k.toLowerCase()));if(uk.length>=3)fb.push({c:'fg',t:`Vocabulario: ${uk.join(', ')}.`});else if(uk.length>=1)fb.push({c:'fw',t:`Palabras clave: ${uk.join(', ')}.`});else fb.push({c:'fb2',t:'Sin palabras clave del tema.'});const uc=conns.filter(c=>tl.includes(c));if(uc.length>=3)fb.push({c:'fg',t:`Conectores: ${uc.join(', ')}.`});else if(uc.length>=1)fb.push({c:'fw',t:`Conectores: ${uc.join(', ')}.`});else fb.push({c:'fb2',t:'Sin conectores. Usa however, therefore...'});const passive=['is used','are used','was developed','can be','is made','has been','have been','is produced','were developed','is known','are known'];const up=passive.filter(p=>tl.includes(p));if(up.length>=2)fb.push({c:'fg',t:`Voz pasiva: "${up.slice(0,3).join('", "')}".`});else fb.push({c:'fw',t:'Usa voz pasiva: "is used for...", "was developed to..."'});document.getElementById('wrFi').innerHTML=fb.map(f=>`<div class="fbi"><i class="fas fa-${f.c==='fg'?'check-circle':f.c==='fw'?'exclamation-triangle':'times-circle'} ${f.c}"></i><span>${f.t}</span></div>`).join('');document.getElementById('wrFb').classList.add('show');const xp=Math.min(60,Math.round(wc*.4)+uk.length*5+uc.length*5+up.length*3);axp(xp);toast(`Escritura evaluada (+${xp} XP)`,'s')};
+document.getElementById('newWr').onclick=()=>{const k=Object.keys(wrD);S.wrLv=k[(k.indexOf(S.wrLv)+1)%k.length];loadWr();toast('Nueva consigna','i')};
+document.getElementById('clrWr').onclick=()=>{document.getElementById('wrA').value='';['wwc','wcc','wsc'].forEach(x=>document.getElementById(x).textContent='0');document.getElementById('wrFb').classList.remove('show')};
+bds('wrDS',LV,l=>{S.wrLv=l;loadWr()});
+
+// ============ EXPRESIÓN ORAL: VOCABULARIO ============
+function getVocab(){return spkV[S.spLv]||spkV.B1}
+function loadSpkV(){const list=getVocab();const d=list[S.spIdx%list.length];const a=document.getElementById('spVA');a.innerHTML=`<div class="lnav" style="margin-bottom:1rem"><button onclick="S.spIdx=(S.spIdx-1+${list.length})%${list.length};loadSpkV()"><i class="fas fa-chevron-left"></i></button><span class="lctr">${S.spIdx%list.length+1}/${list.length}</span><button onclick="S.spIdx=(S.spIdx+1)%${list.length};loadSpkV()"><i class="fas fa-chevron-right"></i></button></div><div class="spkcard"><div class="spkw">${d.w}</div><div class="spkph">${d.ph}</div><div class="spkm">${d.m}</div><div class="spkctx">${d.cx}</div><button class="lmod" onclick="spk('${d.w}',.75)"><i class="fas fa-volume-up"></i> Escuchar</button></div><div style="text-align:center"><button class="mbtn" id="micB" onclick="togMic()"><i class="fas fa-microphone"></i></button><p style="font-size:.74rem;color:var(--muted);margin-top:4px" id="micSt">Pulsa y di la palabra</p></div><div class="rres" id="recR"><div class="rl2">Tu dijiste:</div><div class="rt2" id="recT"></div><div id="matI"></div></div><div class="acts" style="margin-top:1.25rem"><button class="btns" onclick="S.spoken.clear();S.spIdx=0;loadSpkV();toast('Reiniciado','i')"><i class="fas fa-redo"></i> Reiniciar</button><div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--em)">Pronunciadas: <strong id="spkC">${S.spoken.size}</strong>/${list.length}</div></div>`}
+
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let recog=null,isRec=false;
+if(SR){recog=new SR();recog.lang='en-US';recog.interimResults=false;recog.maxAlternatives=3;recog.onresult=function(e){const r=e.results[0];let best=r[0].transcript.trim().toLowerCase(),ml='poor';const list=getVocab(),tgt=list[S.spIdx%list.length].w.toLowerCase();for(let i=0;i<r.length;i++){const a=r[i].transcript.trim().toLowerCase();if(a===tgt){best=a;ml='good';break}else if(lev(a,tgt)<=Math.max(2,Math.floor(tgt.length*.3))){best=a;ml='partial'}}if(best===tgt)ml='good';else if(lev(best,tgt)<=Math.max(2,Math.floor(tgt.length*.3)))ml='partial';const rt=document.getElementById('recT');const mi=document.getElementById('matI');if(rt)rt.textContent=best;if(ml==='good'){mi.innerHTML='<span class="mind mg"><i class="fas fa-check-circle"></i> Pronunciacion correcta</span>';S.spoken.add(S.spIdx);S.correct++;S.streak++;axp(10);const c=document.getElementById('spkC');if(c)c.textContent=S.spoken.size;toast('Correcto! +10 XP','s')}else if(ml==='partial'){mi.innerHTML='<span class="mind mp"><i class="fas fa-exclamation-triangle"></i> Casi - sigue practicando</span>';axp(3)}else{mi.innerHTML='<span class="mind mr"><i class="fas fa-times-circle"></i> Intenta de nuevo</span>';S.streak=0;toast('Intenta de nuevo','e')}const rr=document.getElementById('recR');if(rr)rr.classList.add('show');stopMic()};recog.onerror=function(){const ms=document.getElementById('micSt');if(ms)ms.textContent='Error. Intenta de nuevo.';stopMic()};recog.onend=function(){stopMic()}}
+function startMic(){if(!recog){toast('Reconocimiento de voz no soportado','e');return}isRec=true;const b=document.getElementById('micB');const s=document.getElementById('micSt');if(b)b.classList.add('rec');if(s)s.textContent='Escuchando...';recog.start()}
+function stopMic(){isRec=false;const b=document.getElementById('micB');const s=document.getElementById('micSt');if(b)b.classList.remove('rec');if(s)s.textContent='Pulsa y di la palabra'}
+window.togMic=function(){if(isRec){if(recog)recog.stop();stopMic()}else startMic()};
+bds('spDS',LV,l=>{S.spLv=l;S.spIdx=0;S.spoken.clear();loadSpkV()});
+
+// ============ EXPRESIÓN ORAL: CHAT IA ============
+function loadSpkC(){const a=document.getElementById('spCA');let html='<div class="chcont"><div class="chtopics" id="chTp">';chatT.forEach(t=>{html+=`<div class="tcard" data-id="${t.id}" onclick="startChat('${t.id}')"><h4><i class="fas ${t.ic}"></i> ${t.title} <span class="tlvl">${t.lv}</span></h4><p>${t.ds}</p></div>`});html+='</div><div class="chmsgs" id="chMs"></div><div class="chscore" id="chSc"><h4><i class="fas fa-chart-bar"></i> Evaluacion de tu interaccion</h4><div class="sbars" id="chSb"></div><div class="acts" style="margin-top:1rem"><button class="btnp" onclick="loadSpkC();toast(\'Nueva conversacion\',\'i\')"><i class="fas fa-redo"></i> Nueva conversacion</button></div></div><div class="chinput" id="chIn"><button class="chmic" id="chMicB" onclick="togChatMic()"><i class="fas fa-microphone"></i></button><textarea class="chin" id="chTxt" placeholder="Type your message or press the mic..." rows="1"></textarea><button class="chsend" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button></div></div>';a.innerHTML=html;S.chatTopic=null;S.chatScores={greeted:false,turns:0,kwUsed:new Set(),questions:0,totalWords:0,relevant:0};document.getElementById('chTxt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}})}
+
+window.startChat=function(id){const t=chatT.find(x=>x.id===id);if(!t)return;S.chatTopic=t;S.chatScores={greeted:false,turns:0,kwUsed:new Set(),questions:0,totalWords:0,relevant:0};document.querySelectorAll('.tcard').forEach(c=>c.classList.remove('at'));document.querySelector(`.tcard[data-id="${id}"]`).classList.add('at');document.getElementById('chMs').innerHTML='';document.getElementById('chSc').classList.remove('show');addAI(t.gr)};
+function addAI(text){const ms=document.getElementById('chMs');const d=document.createElement('div');d.className='cmsg ai';d.innerHTML=`<div class="cav"><i class="fas fa-robot"></i></div><div class="cbbl">${text}</div>`;ms.appendChild(d);ms.scrollTop=ms.scrollHeight;spk(text,.88)}
+function addUsr(text){const ms=document.getElementById('chMs');const d=document.createElement('div');d.className='cmsg usr';d.innerHTML=`<div class="cav"><i class="fas fa-user"></i></div><div class="cbbl">${text}</div>`;ms.appendChild(d);ms.scrollTop=ms.scrollHeight}
+window.sendChat=function(){const inp=document.getElementById('chTxt');const text=inp.value.trim();if(!text||!S.chatTopic)return;inp.value='';addUsr(text);const tl=text.toLowerCase();S.chatScores.turns++;S.chatScores.totalWords+=text.split(/\s+/).length;if(/^(hello|hi|hey|good morning|greetings|howdy)/i.test(tl))S.chatScores.greeted=true;if(/\?|^(what|how|why|when|where|who|which|do|does|is|are|can|could|would|should)/i.test(tl))S.chatScores.questions++;S.chatTopic.kw.forEach(k=>{if(tl.includes(k.toLowerCase()))S.chatScores.kwUsed.add(k)});let reply=null;for(const r of S.chatTopic.rp){if(r.t.some(t=>tl
